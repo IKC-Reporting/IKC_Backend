@@ -3,37 +3,90 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 // A schema is a collection of type definitions (hence "typeDefs")
 // that together define the "shape" of queries that are executed against
 // your data.
-const typeDefs = `#graphql
-  # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
-
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
+export const typeDefs = `
+  type EmployeeHour {
+    employeeName: String
+    hoursPerMonth1: Int
+    hoursPerMonth2: Int
+    hoursPerMonth3: Int
+    totalHours: Int
+    hourly: Float
+    total: Float
   }
 
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
+  type OtherContribution {
+    item: String
+    date: String
+    details: String
+    value: Float
+  }
+
   type Query {
-    books: [Book]
+    employeeHours: [EmployeeHour]
+    otherContributions: [OtherContribution]
   }
 `;
-const books = [
+export const employeeHours = [
     {
-        title: 'The Awakening',
-        author: 'Kate Chopin',
+        employeeName: 'Jane Smith',
+        hoursPerMonth1: 3,
+        hoursPerMonth2: 5,
+        hoursPerMonth3: 2,
+        totalHours: 10,
+        hourly: 50.00,
+        total: 500.00,
     },
     {
-        title: 'City of Glass',
-        author: 'Paul Auster',
+        employeeName: 'Frank Turner',
+        hoursPerMonth1: 5,
+        hoursPerMonth2: 4,
+        hoursPerMonth3: 8,
+        totalHours: 17,
+        hourly: 15.00,
+        total: 255.00,
+    },
+    {
+        employeeName: 'Karen Jones',
+        hoursPerMonth1: 8,
+        hoursPerMonth2: 9,
+        hoursPerMonth3: 10,
+        totalHours: 27,
+        hourly: 100.00,
+        total: 2700.00,
+    },
+];
+export const otherContributions = [
+    {
+        item: 'Equipment',
+        date: '2021-01-10',
+        details: '2 x sensors for project ($100 each)',
+        value: 200.00,
+    },
+    {
+        item: 'Travel',
+        date: '2021-02-15',
+        details: 'Travel for site meeting (20km each way @ 0.61/km)',
+        value: 24.40,
+    },
+    {
+        item: 'Travel',
+        date: '2021-03-22',
+        details: 'Travel to Conestoga College (20km each way @ 0.61/km)',
+        value: 24.40,
+    },
+    {
+        item: 'Materials/Supplies',
+    },
+    {
+        item: 'Other',
     },
 ];
 // Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves books from the "books" array above.
-const resolvers = {
+// This resolver retrieves contributions from the "contributions" array above.
+export const resolvers = {
     Query: {
-        books: () => books,
+        employeeHours: () => employeeHours,
+        otherContributions: () => otherContributions,
     },
 };
 // The ApolloServer constructor requires two parameters: your schema
