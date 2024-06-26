@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "compile": "tsc",
+    "generate": "graphql-codegen --config codegen.ts",
+    "compile": "npm run generate && tsc",
     "start": "npm run compile && node ./dist/index.js",
     "test": "vitest"
   },
@@ -19,6 +20,9 @@
     "graphql-tag": "^2.12.6"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/typescript": "4.0.7",
+    "@graphql-codegen/typescript-resolvers": "4.1.0",
     "@testing-library/react": "^16.0.0",
     "@types/node": "^20.12.12",
     "@vitejs/plugin-react": "^4.3.1",

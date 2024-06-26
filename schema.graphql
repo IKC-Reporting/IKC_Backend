@@ -1,0 +1,29 @@
+# A schema is a collection of type definitions (hence "typeDefs")
+# that together define the "shape" of queries that are executed against
+# your data.
+
+type EmployeeHour {
+  employeeName: String
+  hoursPerMonth1: Int
+  hoursPerMonth2: Int
+  hoursPerMonth3: Int
+  totalHours: Int
+  hourly: Float
+  total: Float
+}
+
+type OtherContribution {
+  item: String
+  date: String
+  details: String
+  value: Float
+}
+
+type Query {
+  employeeHours: [EmployeeHour]
+  otherContributions: [OtherContribution]
+}
+
+type Mutation {
+  createOtherContributionItem(name: String): Boolean
+}
