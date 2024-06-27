@@ -1,29 +1,158 @@
-# A schema is a collection of type definitions (hence "typeDefs")
-# that together define the "shape" of queries that are executed against
-# your data.
-
-type EmployeeHour {
-  employeeName: String
-  hoursPerMonth1: Int
-  hoursPerMonth2: Int
-  hoursPerMonth3: Int
-  totalHours: Int
-  hourly: Float
-  total: Float
-}
-
-type OtherContribution {
-  item: String
-  date: String
-  details: String
-  value: Float
-}
+scalar Date
 
 type Query {
-  employeeHours: [EmployeeHour]
-  otherContributions: [OtherContribution]
+  user(id: ID!): User
+  contributor(userId: ID!, partnerOrgId: ID!): Contributor
+  partnerOrg(id: ID!): PartnerOrg
+  hourContribItem(id: ID!): HourContribItem
+  hourLog(id: ID!): HourLog
+  otherContribItem(id: ID!): OtherContribItem
+  ikcReport(id: ID!): IKCReport
+  submissionItem(id: ID!): SubmissionItem
+  researchProject(id: ID!): ResearchProject
 }
 
 type Mutation {
-  createOtherContributionItem(name: String): Boolean
+  # User mutations
+  createUser(firstName: String!, lastName: String!): ID!
+  updateUser(firstName: String, lastName: String): Boolean!
+  disableUser(siteAdminId: ID!, userId: ID!): Boolean!
+  reactivateUser(siteAdminId: ID!, userId: ID!): Boolean!
+
+  # PartnerOrg mutations
+  createPartnerOrg(userId: ID!, partnerOrgAdminId: ID!, name: String!): ID!
+  createContributor(
+    userId: ID!
+    partnerOrgAdminId: ID!
+    partnerOrgId: ID!
+    annualSalary: Float!
+    dailyHours: Float!
+    benRatePer: Float!
+  ): Boolean!
+  addPartnerOrgAdmin(userId: ID!, newAdminID: ID!): Boolean!
+  removePartnerAdmin(userId: ID!, removedAdminID: ID!): Boolean!
+
+  # hour log & contribution item mutations
+  createHourContribItem(contributorId: ID!): ID!
+  # hour log generated in resolver
+  addHourLogToItem(
+    hourContribItemId: ID!
+    hours: Float!
+    month: Date!
+  ): Boolean!
+  removeHourContribItem(itemId: ID!, userId: ID!): Boolean!
+  removeHourLogItem(hourLogId: ID!, userId: ID!): Boolean!
+
+  # other contribution item mutations
+  createOtherContribItem(
+    contributorId: ID!
+    itemName: String!
+    contributionDate: Date!
+    value: Float!
+    details: String!
+  ): ID!
+  removeOtherContribItem(itemId: ID!, userId: ID!): Boolean!
+
+  # IKC Report mutations
+  createIKCReport(
+    userId: ID!
+    partnerOrgId: ID!
+    reportStartDate: Date!
+    reportEndDate: Date!
+    employeeHourIds: [ID]
+    otherContributionIds: [ID]
+  ): ID!
+  createSubmissionItem(
+    userId: ID!
+    ikcReportID: ID!
+    submitterId: ID!
+    submissionDate: Date!
+  ): ID!
+  submitIKCReport(userId: ID!, submissionItemId: ID!): Boolean!
+  approveIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
+  denyIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
+
+  # Research Project mutations
+  createResearchProject(
+    admin: ID!
+    projectTitle: String!
+    startDate: Date!
+    endDate: Date!
+  ): ID!
+  addPartnerOrg(researchProjectId: ID!, partnerOrgId: ID!): Boolean!
+  removePartnerOrg(researchProjectId: ID!, partnerOrgId: ID!): Boolean!
+  addNewAdmin(userId: ID!, newAdmin: ID!): Boolean!
+  removeAdmin(userId: ID!, adminId: ID!): Boolean!
+}
+
+type User {
+  userId: ID!
+  firstName: String!
+  lastName: String!
+  siteAdmin: Boolean!
+}
+
+type Contributor {
+  # userID + partnerOrgId work as a complex key here
+  userId: ID!
+  annualSalary: Float!
+  dailyHours: Float!
+  benRatePer: Float!
+}
+
+type PartnerOrg {
+  id: ID!
+  name: String!
+  admins: [User]!
+  contributors: [Contributor]
+}
+
+type HourLog {
+  id: ID!
+  hours: Float!
+  month: Date!
+  # generated on server from contributor pay, not supplied by mutation
+  hourlyPay: Float
+}
+
+type HourContribItem {
+  id: ID!
+  contributor: Contributor!
+  hoursPerMonth: [HourLog]
+}
+
+type OtherContribItem {
+  id: ID!
+  contributor: Contributor!
+  name: String!
+  contributionDate: Date!
+  value: Float!
+  details: String!
+}
+
+type SubmissionItem {
+  submissionItemID: ID!
+  submitterId: ID!
+  ikcReportID: ID!
+  submissionDate: Date!
+}
+
+type IKCReport {
+  id: ID!
+  partnerOrgId: ID!
+  submissionHistory: [SubmissionItem]
+  reportStartDate: Date!
+  reportEndDate: Date!
+  employeeHours: [HourContribItem]
+  otherContributions: [OtherContribItem]
+}
+
+type ResearchProject {
+  id: ID!
+  projectTitle: String!
+  startDate: Date!
+  endDate: Date!
+  admin: [User!]
+  projectPartners: [PartnerOrg]
+  ikcReports: [IKCReport]
 }
