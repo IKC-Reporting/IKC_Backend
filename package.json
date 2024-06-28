@@ -17,6 +17,7 @@
   "dependencies": {
     "@apollo/server": "^4.10.4",
     "@as-integrations/next": "^3.0.0",
+    "@prisma/client": "^5.16.1",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6"
   },

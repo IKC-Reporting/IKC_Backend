@@ -1,4 +1,4 @@
 import { Resolvers } from "../generated/graphql";
-import { OtherContribItemResolvers } from "./otherContribItemResolvers";
-const resolvers: Resolvers = { Query: { ...OtherContribItemResolvers.Query } };
+
+const resolvers: Resolvers = {};
 export default resolvers;

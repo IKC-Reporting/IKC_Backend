@@ -1,4 +1,4 @@
-scalar Date
+scalar DateTime
 
 type Query {
   user(id: ID!): User
@@ -17,7 +17,7 @@ type Mutation {
   createUser(firstName: String!, lastName: String!): ID!
   updateUser(firstName: String, lastName: String): Boolean!
   disableUser(siteAdminId: ID!, userId: ID!): Boolean!
-  reactivateUser(siteAdminId: ID!, userId: ID!): Boolean!
+  reactivateUser(userId: ID!, disabledUserId: ID!): Boolean!
 
   # PartnerOrg mutations
   createPartnerOrg(userId: ID!, partnerOrgAdminId: ID!, name: String!): ID!
@@ -34,31 +34,32 @@ type Mutation {
 
   # hour log & contribution item mutations
   createHourContribItem(contributorId: ID!): ID!
+
   # hour log generated in resolver
   addHourLogToItem(
     hourContribItemId: ID!
     hours: Float!
-    month: Date!
+    month: DateTime!
   ): Boolean!
   removeHourContribItem(itemId: ID!, userId: ID!): Boolean!
   removeHourLogItem(hourLogId: ID!, userId: ID!): Boolean!
 
   # other contribution item mutations
   createOtherContribItem(
-    contributorId: ID!
+    userId: ID!
     itemName: String!
-    contributionDate: Date!
+    contributionDate: DateTime!
     value: Float!
     details: String!
   ): ID!
-  removeOtherContribItem(itemId: ID!, userId: ID!): Boolean!
+  removeOtherContribItem(userId: ID!, itemId: ID!): Boolean!
 
   # IKC Report mutations
   createIKCReport(
     userId: ID!
     partnerOrgId: ID!
-    reportStartDate: Date!
-    reportEndDate: Date!
+    reportStartDate: DateTime!
+    reportEndDate: DateTime!
     employeeHourIds: [ID]
     otherContributionIds: [ID]
   ): ID!
@@ -66,7 +67,7 @@ type Mutation {
     userId: ID!
     ikcReportID: ID!
     submitterId: ID!
-    submissionDate: Date!
+    submissionDate: DateTime!
   ): ID!
   submitIKCReport(userId: ID!, submissionItemId: ID!): Boolean!
   approveIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
@@ -74,27 +75,36 @@ type Mutation {
 
   # Research Project mutations
   createResearchProject(
-    admin: ID!
+    userId: ID!
     projectTitle: String!
-    startDate: Date!
-    endDate: Date!
+    startDate: DateTime!
+    endDate: DateTime!
   ): ID!
-  addPartnerOrg(researchProjectId: ID!, partnerOrgId: ID!): Boolean!
-  removePartnerOrg(researchProjectId: ID!, partnerOrgId: ID!): Boolean!
+  addPartnerOrg(
+    userId: ID!
+    researchProjectId: ID!
+    partnerOrgId: ID!
+  ): Boolean!
+  removePartnerOrg(
+    userId: ID!
+    researchProjectId: ID!
+    partnerOrgId: ID!
+  ): Boolean!
   addNewAdmin(userId: ID!, newAdmin: ID!): Boolean!
   removeAdmin(userId: ID!, adminId: ID!): Boolean!
 }
 
 type User {
-  userId: ID!
+  id: ID!
   firstName: String!
   lastName: String!
   siteAdmin: Boolean!
 }
 
 type Contributor {
-  # userID + partnerOrgId work as a complex key here
+  id: ID
   userId: ID!
+  partnerOrgId: ID!
   annualSalary: Float!
   dailyHours: Float!
   benRatePer: Float!
@@ -103,46 +113,45 @@ type Contributor {
 type PartnerOrg {
   id: ID!
   name: String!
-  admins: [User]!
+  admins: [ID]!
   contributors: [Contributor]
 }
 
 type HourLog {
-  id: ID!
+  id: ID
   hours: Float!
-  month: Date!
-  # generated on server from contributor pay, not supplied by mutation
+  month: String!
   hourlyPay: Float
 }
 
 type HourContribItem {
-  id: ID!
+  id: ID
   contributor: Contributor!
   hoursPerMonth: [HourLog]
 }
 
 type OtherContribItem {
-  id: ID!
+  id: ID
   contributor: Contributor!
   name: String!
-  contributionDate: Date!
+  contributionDate: DateTime!
   value: Float!
   details: String!
 }
 
 type SubmissionItem {
-  submissionItemID: ID!
+  id: ID
   submitterId: ID!
   ikcReportID: ID!
-  submissionDate: Date!
+  submissionDate: DateTime!
 }
 
 type IKCReport {
   id: ID!
   partnerOrgId: ID!
   submissionHistory: [SubmissionItem]
-  reportStartDate: Date!
-  reportEndDate: Date!
+  reportStartDate: DateTime!
+  reportEndDate: DateTime!
   employeeHours: [HourContribItem]
   otherContributions: [OtherContribItem]
 }
@@ -150,9 +159,9 @@ type IKCReport {
 type ResearchProject {
   id: ID!
   projectTitle: String!
-  startDate: Date!
-  endDate: Date!
-  admin: [User!]
+  startDate: DateTime!
+  endDate: DateTime!
+  admins: [User]
   projectPartners: [PartnerOrg]
   ikcReports: [IKCReport]
 }
