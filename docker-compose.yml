@@ -1,0 +1,44 @@
+version: "3.9"
+services:
+  # iks_reporting_api:
+  #   build: .
+  #   container_name: iks_reporting_api
+  #   image: api:latest
+  #   volumes:
+  #     - postgres-data:/app/postgres-data
+  #   restart: always
+  #   environment:
+  #     DATABASE_URL: ${DATABASE_URL}
+  #     GRAPHQL_PORT: ${GRAPHQL_PORT}
+  #   expose:
+  #     - 4000
+  #   ports:
+  #     - 4000:${GRAPHQL_PORT}
+  #   depends_on:
+  #     iks_reporting_db:
+  #       condition: service_healthy
+  #   command: ["npm", "run", "start"]
+
+  iks_reporting_db:
+    container_name: iks_reporting_db
+    image: postgres:latest
+    restart: always
+    ports:
+      - 6500:5432
+    expose:
+      - 6500
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${DB_USER} -d ${DB_NAME}'"]
+      interval: 20s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - ikc-data:/var/lib/postgresql/data
+
+volumes:
+  ikc-data:
+    name: ikc-data
