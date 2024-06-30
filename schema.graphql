@@ -21,9 +21,9 @@ type Mutation {
     lastName: String!
     isSiteAdmin: Boolean!
   ): ID!
-  updateUser(userId: ID!, firstName: String, lastName: String): Boolean!
-  disableUser(siteAdminId: ID!, userId: ID!): Boolean!
-  reactivateUser(siteAdminId: ID!, disabledUserId: ID!): Boolean!
+  # updateUser(userId: ID!, firstName: String, lastName: String): Boolean!
+  # disableUser(siteAdminId: ID!, userId: ID!): Boolean!
+  # reactivateUser(siteAdminId: ID!, disabledUserId: ID!): Boolean!
 
   # TODO: Finish below mutations, may need to update inputs etc. as needed but commenting out to reduce generation time
   # # PartnerOrg mutations

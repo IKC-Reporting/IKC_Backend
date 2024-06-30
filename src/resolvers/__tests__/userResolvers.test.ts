@@ -15,13 +15,13 @@ describe("User resolver tests", () => {
     };
 
     prisma.user.create.mockResolvedValue({ ...newUser, id: "newUser123" });
-    const userId = userResolvers.Mutation.createUser(
+    const userId = await userResolvers.Mutation.createUser(
       newUser.creatorId,
       newUser.firstName,
       newUser.lastName,
       newUser.siteAdmin
     );
 
-    expect(userId).toBeTruthy();
+    expect(userId).toBe("newUser123");
   });
 });
