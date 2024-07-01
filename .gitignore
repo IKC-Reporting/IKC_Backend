@@ -3,4 +3,5 @@ coverage
 dist
 **/generated
 .env
-migrations
+.dccache
+**/migration.sql
