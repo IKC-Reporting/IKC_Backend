@@ -15,6 +15,13 @@ describe("User resolver tests", () => {
     };
 
     prisma.user.create.mockResolvedValue({ ...newUser, id: "newUser123" });
+    prisma.user.findFirst.mockResolvedValue({
+      id: "siteAdmin",
+      siteAdmin: true,
+      firstName: "firstname",
+      lastName: "lastname",
+    });
+
     const userId = await userResolvers.Mutation.createUser(
       newUser.creatorId,
       newUser.firstName,

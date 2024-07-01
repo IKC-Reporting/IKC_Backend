@@ -42,7 +42,10 @@ export default {
           });
 
           if (newUser) {
+            logger.info("new user: ", newUser);
             return newUser.id;
+          } else {
+            return null;
           }
         } else {
           logger.warn(
@@ -51,7 +54,7 @@ export default {
           return null;
         }
       } catch (error) {
-        logger.error(`error creating user`, error);
+        logger.error(`error creating user: `, error);
         return null;
       }
     },
