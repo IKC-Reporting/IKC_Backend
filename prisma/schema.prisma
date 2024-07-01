@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+model User {
+  id String @id @unique
+
+  firstName String
+  lastName  String
+  siteAdmin Boolean
+
+  // contributorAssignments          Contributor[]
+  // PartnerOrgAdminAssignments      PartnerOrg[]
+  // ResearchProjectAdminAssignments ResearchProject[]
+  // SubmissionItems                  SubmissionItem[]
+}
+
+// TODO: uncomment and update below as graphql is implemented to avoid issues, user may also need above uncommended as well
+// model Contributor {
+//   id String @id
+
+//   userId       String
+//   User         User       @relation(fields: [userId], references: [id])
+//   partnerOrgId String
+//   PartnerOrg   PartnerOrg @relation(fields: [partnerOrgId], references: [id])
+
+//   annualSalary     Float
+//   dailyHours       Float
+//   benRatePer       Float
+//   HourContribItem  HourContribItem[]
+//   OtherContribItem OtherContribItem[]
+
+//   @@unique([userId, partnerOrgId])
+// }
+
+// model PartnerOrg {
+//   id                String           @id
+//   ResearchProject   ResearchProject? @relation(fields: [researchProjectId], references: [id])
+//   researchProjectId String?
+
+//   name         String
+//   admins       User[]
+//   contributors Contributor[]
+// }
+
+// model HourLog {
+//   id                Int             @id @default(autoincrement())
+//   HourContribItem   HourContribItem @relation(fields: [hourContribItemId], references: [id])
+//   hourContribItemId Int
+
+//   hours     Float
+//   month     String
+//   hourlyPay Float
+// }
+
+// model HourContribItem {
+//   id            Int         @id @default(autoincrement())
+//   contributor   Contributor @relation(fields: [contributorId], references: [id])
+//   contributorId String
+//   IKCReport     IKCReport?  @relation(fields: [iKCReportId], references: [id])
+//   iKCReportId   String?
+
+//   hoursPerMonth HourLog[]
+// }
+
+// model OtherContribItem {
+//   id            Int         @id @default(autoincrement())
+//   contributor   Contributor @relation(fields: [contributorId], references: [id])
+//   contributorId String
+//   ikcReport     IKCReport?  @relation(fields: [ikcReportId], references: [id])
+//   ikcReportId   String?
+
+//   name             String
+//   contributionDate DateTime
+//   value            Float
+//   details          String
+// }
+
+// model SubmissionItem {
+//   id          Int       @id @default(autoincrement())
+//   submitter   User      @relation(fields: [submitterId], references: [id])
+//   submitterId String
+//   ikcReport   IKCReport @relation(fields: [ikcReportId], references: [id])
+//   ikcReportId String
+
+//   submissionDate DateTime
+// }
+
+// model IKCReport {
+//   id                String           @id
+//   partnerOrgId      String
+//   ResearchProject   ResearchProject? @relation(fields: [researchProjectId], references: [id])
+//   researchProjectId String?
+
+//   reportStartDate    DateTime
+//   reportEndDate      DateTime
+//   submissionHistory  SubmissionItem[]
+//   employeeHours      HourContribItem[]
+//   otherContributions OtherContribItem[]
+// }
+
+// model ResearchProject {
+//   id String @id
+
+//   projectTitle    String
+//   startDate       DateTime
+//   endDate         DateTime
+//   admins          User[]
+//   projectPartners PartnerOrg[]
+//   ikcReports      IKCReport[]
+// }
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}

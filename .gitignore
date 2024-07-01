@@ -1,1 +1,7 @@
 node_modules
+coverage
+dist
+**/generated
+.env
+.dccache
+**/migration.sql
