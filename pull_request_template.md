@@ -11,13 +11,9 @@
 
 # Testing
 
-## Unit Tests
+## Unit Tests & Coverage report screenshot
 
-**run `npm run coverage` and screenshots any changed files.**
-
-### Coverage report screenshot
-
-**run `npm run coverage` and screenshot the final output. (ex x of y covered)**
+**run `npm run coverage` and screenshot the final output (ex x of y covered) along with changed/added tests**
 
 ## Security Tests
 
@@ -25,4 +21,4 @@
 
 ## Examples
 
-**screenshot or screen-record any changes to the UI for altered components/css, or demo of any major functional changes.**
+**screenshot or screen-record any changes to the UI for altered components/css, or demo of any major functional changes if applicable.**
