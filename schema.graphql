@@ -2,15 +2,14 @@ scalar DateTime
 
 type Query {
   user(id: ID!): User
-  # TODO: update below queries and implement as needed, may need to change or make alternatives (like get all contributors for partner org, or research proj by name)
-  # contributor(userId: ID!, partnerOrgId: ID!): Contributor
-  # partnerOrg(id: ID!): PartnerOrg
-  # hourContribItem(id: ID!): HourContribItem
-  # hourLog(id: ID!): HourLog
-  # otherContribItem(id: ID!): OtherContribItem
-  # ikcReport(id: ID!): IKCReport
-  # submissionItem(id: ID!): SubmissionItem
-  # researchProject(id: ID!): ResearchProject
+  contributor(userId: ID!, partnerOrgId: ID!): Contributor
+  partnerOrg(id: ID!): PartnerOrg
+  hourContribItem(id: ID!): HourContribItem
+  hourLog(id: ID!): HourLog
+  otherContribItem(id: ID!): OtherContribItem
+  ikcReport(id: ID!): IKCReport
+  submissionItem(id: ID!): SubmissionItem
+  researchProject(id: ID!): ResearchProject
 }
 
 type Mutation {
@@ -21,85 +20,85 @@ type Mutation {
     lastName: String!
     isSiteAdmin: Boolean!
   ): ID!
-  # updateUser(userId: ID!, firstName: String, lastName: String): Boolean!
-  # disableUser(siteAdminId: ID!, userId: ID!): Boolean!
-  # reactivateUser(siteAdminId: ID!, disabledUserId: ID!): Boolean!
+  updateUser(userId: ID!, firstName: String, lastName: String): Boolean!
+  disableUser(siteAdminId: ID!, userId: ID!): Boolean!
 
   # TODO: Finish below mutations, may need to update inputs etc. as needed but commenting out to reduce generation time
   # # PartnerOrg mutations
-  # createPartnerOrg(siteAdminId: ID!, adminId: ID!, name: String!): ID!
-  # createContributor(
-  #   userId: ID!
-  #   partnerOrgAdminId: ID!
-  #   partnerOrgId: ID!
-  #   annualSalary: Float!
-  #   dailyHours: Float!
-  #   benRatePer: Float!
-  # ): Boolean!
-  # addPartnerOrgAdmin(userId: ID!, newAdminID: ID!): Boolean!
-  # removePartnerAdmin(userId: ID!, removedAdminID: ID!): Boolean!
+  createPartnerOrg(siteAdminId: ID!, adminId: ID!, name: String!): ID!
+  createContributor(
+    userId: ID!
+    partnerOrgAdminId: ID!
+    partnerOrgId: ID!
+    annualSalary: Float!
+    dailyHours: Float!
+    benRatePer: Float!
+  ): Boolean!
+  addPartnerOrgAdmin(userId: ID!, newAdminID: ID!): Boolean!
+  removePartnerAdmin(userId: ID!, removedAdminID: ID!): Boolean!
 
   # # hour log & contribution item mutations
-  # createHourContribItem(contributorId: ID!, hours: Float, month: String): ID!
+  createHourContribItem(contributorId: ID!, hours: Float, month: String): ID!
+  removeHourContribItem(itemId: ID!, userId: ID!): Boolean!
 
   # # hour log generated in resolver
-  # addHourLogToItem(
-  #   hourContribItemId: ID!
-  #   hours: Float!
-  #   month: String!
-  # ): Boolean!
-  # removeHourContribItem(itemId: ID!, userId: ID!): Boolean!
-  # removeHourLogItem(hourLogId: ID!, userId: ID!): Boolean!
+  addHourLogToItem(
+    hourContribItemId: ID!
+    hours: Float!
+    month: String!
+  ): Boolean!
+
+  removeHourLogItem(hourLogId: ID!, userId: ID!): Boolean!
 
   # # other contribution item mutations
-  # createOtherContribItem(
-  #   userId: ID!
-  #   itemName: String!
-  #   contributionDate: DateTime!
-  #   value: Float!
-  #   details: String!
-  # ): ID!
-  # removeOtherContribItem(userId: ID!, itemId: ID!): Boolean!
+  createOtherContribItem(
+    userId: ID!
+    itemName: String!
+    contributionDate: DateTime!
+    value: Float!
+    details: String!
+  ): ID!
+  removeOtherContribItem(userId: ID!, itemId: ID!): Boolean!
 
   # # IKC Report mutations
-  # createIKCReport(
-  #   userId: ID!
-  #   partnerOrgId: ID!
-  #   reportStartDate: DateTime!
-  #   reportEndDate: DateTime!
-  #   employeeHourIds: [ID]
-  #   otherContributionIds: [ID]
-  # ): ID!
-  # createSubmissionItem(
-  #   userId: ID!
-  #   ikcReportID: ID!
-  #   submitterId: ID!
-  #   submissionDate: DateTime!
-  # ): ID!
-  # submitIKCReport(userId: ID!, submissionItemId: ID!): Boolean!
-  # approveIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
-  # denyIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
+  createIKCReport(
+    userId: ID!
+    partnerOrgId: ID!
+    reportStartDate: DateTime!
+    reportEndDate: DateTime!
+    employeeHourIds: [ID]
+    otherContributionIds: [ID]
+  ): ID!
+  createSubmissionItem(
+    userId: ID!
+    ikcReportID: ID!
+    submitterId: ID!
+    submissionDate: DateTime!
+  ): ID!
+  submitIKCReport(userId: ID!, submissionItemId: ID!): Boolean!
+  approveIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
+  denyIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
 
   # # Research Project mutations
-  # createResearchProject(
-  #   siteAdminId: ID!
-  #   adminId: ID!
-  #   projectTitle: String!
-  #   startDate: DateTime!
-  #   endDate: DateTime!
-  # ): ID!
-  # addPartnerOrg(
-  #   userId: ID!
-  #   researchProjectId: ID!
-  #   partnerOrgId: ID!
-  # ): Boolean!
-  # removePartnerOrg(
-  #   userId: ID!
-  #   researchProjectId: ID!
-  #   partnerOrgId: ID!
-  # ): Boolean!
-  # addNewAdmin(userId: ID!, newAdmin: ID!): Boolean!
-  # removeAdmin(userId: ID!, adminId: ID!): Boolean!
+  createResearchProject(
+    siteAdminId: ID!
+    adminId: ID!
+    projectTitle: String!
+    startDate: DateTime!
+    endDate: DateTime!
+  ): ID!
+  addPartnerOrg(
+    userId: ID!
+    researchProjectId: ID!
+    partnerOrgId: ID!
+  ): Boolean!
+  removePartnerOrg(
+    userId: ID!
+    researchProjectId: ID!
+    partnerOrgId: ID!
+  ): Boolean!
+  addNewAdmin(userId: ID!, newAdmin: ID!): Boolean!
+  removeAdmin(userId: ID!, adminId: ID!): Boolean!
 }
 
 type User {
@@ -111,67 +110,67 @@ type User {
 
 # TODO: implement below types , should be roughly in this order but commenting out to avoid issues with prisma schema being different from graphql
 # in general refer to prisma but leave out some parts which may not be needed (ex include user id not user obj in contributor...)
-# type Contributor {
-#   id: ID
-#   userId: ID!
-#   partnerOrgId: ID!
-#   annualSalary: Float!
-#   dailyHours: Float!
-#   benRatePer: Float!
-# }
+type Contributor {
+  id: ID
+  userId: ID!
+  partnerOrgId: ID!
+  annualSalary: Float!
+  dailyHours: Float!
+  benRatePer: Float!
+}
 
-# type PartnerOrg {
-#   id: ID!
-#   name: String!
-#   admins: [ID]!
-#   contributors: [Contributor]
-# }
+type PartnerOrg {
+  id: ID!
+  name: String!
+  admins: [ID]!
+  contributors: [Contributor]
+}
 
-# type HourLog {
-#   id: ID
-#   hours: Float!
-#   month: String!
-#   hourlyPay: Float
-# }
+type HourLog {
+  id: ID
+  hours: Float!
+  month: String!
+  hourlyPay: Float
+}
 
-# type HourContribItem {
-#   id: ID
-#   contributor: Contributor!
-#   hoursPerMonth: [HourLog]
-# }
+type HourContribItem {
+  id: ID
+  contributor: Contributor!
+  hoursPerMonth: [HourLog]
+}
 
-# type OtherContribItem {
-#   id: ID
-#   contributor: Contributor!
-#   name: String!
-#   contributionDate: DateTime!
-#   value: Float!
-#   details: String!
-# }
+type OtherContribItem {
+  id: ID
+  contributor: Contributor!
+  name: String!
+  contributionDate: DateTime!
+  value: Float!
+  details: String!
+}
 
-# type SubmissionItem {
-#   id: ID
-#   submitterId: ID!
-#   ikcReportID: ID!
-#   submissionDate: DateTime!
-# }
+type SubmissionItem {
+  id: ID
+  submitterId: ID!
+  ikcReportID: ID!
+  submissionDate: DateTime!
+}
 
-# type IKCReport {
-#   id: ID!
-#   partnerOrgId: ID!
-#   submissionHistory: [SubmissionItem]
-#   reportStartDate: DateTime!
-#   reportEndDate: DateTime!
-#   employeeHours: [HourContribItem]
-#   otherContributions: [OtherContribItem]
-# }
+type IKCReport {
+  id: ID!
+  partnerOrgId: ID!
+  submissionHistory: [SubmissionItem]
+  reportStartDate: DateTime!
+  reportEndDate: DateTime!
+  employeeHours: [HourContribItem]
+  otherContributions: [OtherContribItem]
+}
 
-# type ResearchProject {
-#   id: ID!
-#   projectTitle: String!
-#   startDate: DateTime!
-#   endDate: DateTime!
-#   admins: [User]
-#   projectPartners: [PartnerOrg]
-#   ikcReports: [IKCReport]
-# }
+type ResearchProject {
+  id: ID!
+  projectTitle: String!
+  startDate: DateTime!
+  endDate: DateTime!
+  admins: [User]
+  projectPartners: [PartnerOrg]
+  ikcReports: [IKCReport]
+}
