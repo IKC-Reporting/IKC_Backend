@@ -15,7 +15,7 @@ describe("User resolver tests", () => {
     };
 
     prisma.user.create.mockResolvedValue({ ...newUser, id: "newUser123" });
-    prisma.user.findFirst.mockResolvedValue({
+    prisma.user.findFirstOrThrow.mockResolvedValue({
       id: "siteAdmin",
       siteAdmin: true,
       firstName: "firstname",

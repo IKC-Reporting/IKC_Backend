@@ -8,7 +8,8 @@
     "generate": "prisma generate && graphql-codegen --config codegen.ts",
     "compile": "npm run generate && tsc",
     "start": "npm run compile && node ./dist/src/index.js",
-    "dev": "npm run generate && tsx watch ./src/index.ts",
+    "dev-seed": "tsx ./prisma/seed/dev.ts",
+    "dev": "npm run dev-seed && npm run generate && tsx watch ./src/index.ts",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
