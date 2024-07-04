@@ -1,24 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import prisma from "../../../libs/__mocks__/prisma";
+import { testAdmin, testUser } from "../../__mocks__/index";
 import userResolvers from "../userResolvers";
 
 vi.mock("../../../libs/prisma");
-
-const testUser = {
-  id: "testUserId",
-  firstName: "newUser",
-  lastName: "exLastname",
-  siteAdmin: false,
-  active: true,
-};
-
-const testAdmin = {
-  id: "testAdminId",
-  firstName: "newAdmin",
-  lastName: "exLastname",
-  siteAdmin: true,
-  active: true,
-};
 
 describe("User resolver tests", () => {
   describe("user Queries", () => {
