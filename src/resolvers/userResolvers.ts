@@ -10,8 +10,11 @@ export default {
 
       logger.info(`querying user with id: ${id}`);
       try {
-        const user: User = await prisma.user.findFirst({ where: { id } });
+        const user = await prisma.user.findUniqueOrThrow({
+          where: { id, active: true },
+        });
 
+        // don't need to check as OrThrow already triggers an error if no user is found
         return { ...user };
       } catch (error) {
         logger.error(`error with user query: ${error}`);
@@ -27,17 +30,20 @@ export default {
         `creating user with: creatorId: ${siteAdminId}, firstName: ${firstName}, lastName: ${lastName}, isSiteAdmin: ${isSiteAdmin}`
       );
       try {
-        const creator: User = await prisma.user.findFirstOrThrow({
-          where: { id: siteAdminId },
+        // check if creator is active & has correct authority
+        const creator: User = await prisma.user.findUniqueOrThrow({
+          where: { id: siteAdminId, active: true },
         });
 
         if (creator?.siteAdmin) {
+          // if they do then create a new active user with a unique id
           const newUser = await prisma.user.create({
             data: {
               firstName,
               lastName,
               siteAdmin: isSiteAdmin,
               id: randomUUID(),
+              active: true,
             },
           });
 
@@ -47,17 +53,113 @@ export default {
             );
             return newUser.id;
           } else {
-            return null;
+            throw new Error(
+              `new user returned null or undefined from prisma create`
+            );
           }
         } else {
-          logger.warn(
+          throw new Error(
             `failed to create user, creatorId: ${siteAdminId} not siteAdmin`
           );
-          return null;
         }
       } catch (error) {
         logger.error(`error creating user: ${error}`);
         return null;
+      }
+    },
+
+    updateUser: async (parent, args, context, info) => {
+      const { userId, firstName, lastName } = args;
+
+      logger.info(
+        `updating user ${userId} with new firstName: ${firstName}, lastName: ${lastName}`
+      );
+      try {
+        await prisma.user.update({
+          where: { id: userId },
+          data: { firstName, lastName },
+        });
+
+        const user = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+        });
+
+        if (user.firstName === firstName && user.lastName === lastName) {
+          logger.info(`successfully updated user`);
+          return true;
+        } else {
+          logger.warn(
+            `failure updated user, updated names not returned from prisma response`
+          );
+          return false;
+        }
+      } catch (error) {
+        logger.error(`error updating user: ${error}`);
+        return false;
+      }
+    },
+
+    disableUser: async (parent, args, context, info) => {
+      const { siteAdminId, userId } = args;
+
+      try {
+        // check if creator is active & has correct authority
+        const creator: User = await prisma.user.findUniqueOrThrow({
+          where: { id: siteAdminId, active: true },
+        });
+
+        if (creator?.siteAdmin) {
+          // if they do then toggle the active state to false
+          const user = await prisma.user.update({
+            where: { id: userId },
+            data: { active: false },
+          });
+
+          if (!user.active) {
+            logger.info(`successfully disabled user ${user.id}`);
+            return true;
+          } else {
+            logger.warn(
+              `failure to disable user, incorrect state returned from prisma response for user ${user.id}`
+            );
+            return false;
+          }
+        }
+      } catch (error) {
+        logger.error(`error disabling user: ${error}`);
+        return false;
+      }
+    },
+
+    reactivateUser: async (parent, args, context, info) => {
+      const { siteAdminId, userId } = args;
+
+      try {
+        // check if creator is active & has correct authority
+        const creator: User = await prisma.user.findUniqueOrThrow({
+          where: { id: siteAdminId, active: true },
+        });
+
+        if (creator?.siteAdmin) {
+          // if they do then toggle the active state to true
+          const user = await prisma.user.update({
+            where: { id: userId },
+            data: { active: true },
+          });
+
+          if (user.active) {
+            logger.info(`successfully enabled user ${user.id}`);
+            return true;
+          } else {
+            logger.warn(
+              `failure to enable user, incorrect state returned from prisma response for user ${user.id}`
+            );
+            return false;
+          }
+        }
+      } catch (error) {
+        logger.error(`error disabling user: ${error}`);
+        return false;
       }
     },
   },
