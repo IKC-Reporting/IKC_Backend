@@ -2,7 +2,7 @@ scalar DateTime
 
 type Query {
   user(id: ID!): User
-  contributor(userId: ID!, partnerOrgId: ID!): Contributor
+  contributor(id: ID!): Contributor
   partnerOrg(id: ID!): PartnerOrg
   hourContribItem(id: ID!): HourContribItem
   hourLog(id: ID!): HourLog
@@ -114,9 +114,13 @@ type Contributor {
   id: ID
   userId: ID!
   partnerOrgId: ID!
+
   annualSalary: Float!
   dailyHours: Float!
   benRatePer: Float!
+
+  hourContribItems: [HourContribItem]
+  otherContribItems: [OtherContribItem]
 }
 
 type PartnerOrg {

@@ -1,4 +1,42 @@
-export const employeeHours = [
+export const testUser = {
+  id: "testUserId",
+  firstName: "newUser",
+  lastName: "exLastname",
+  siteAdmin: false,
+  active: true,
+};
+
+export const testAdmin = {
+  id: "testAdminId",
+  firstName: "newAdmin",
+  lastName: "exLastname",
+  siteAdmin: true,
+  active: true,
+  PartnerOrgAdminAssignments: [{ id: "testPartnerOrgId" }],
+};
+
+export const testPartnerOrg = {
+  id: "testPartnerOrgId",
+  ResearchProject: null,
+  researchProjectId: null,
+  name: "example org name",
+  admins: [testAdmin],
+  contributors: null,
+};
+
+export const testContributor = {
+  id: "testContributorId",
+
+  userId: testUser.id,
+  partnerOrgId: "partnerOrgID",
+  annualSalary: 45000,
+  dailyHours: 8,
+  benRatePer: 0.1,
+  HourContribItem: [null],
+  OtherContribItem: [null],
+};
+
+export const employeeHoursMock = [
   {
     employeeName: "Jane Smith",
     hoursPerMonth1: 3,
@@ -28,7 +66,7 @@ export const employeeHours = [
   },
 ];
 
-export const otherContributions = [
+export const otherContributionsMock = [
   {
     item: "Equipment",
     date: "2021-01-10",
