@@ -25,11 +25,11 @@ model Contributor {
   partnerOrgId String
   PartnerOrg   PartnerOrg @relation(fields: [partnerOrgId], references: [id])
 
-  annualSalary     Float
-  dailyHours       Float
-  benRatePer       Float
-  HourContribItem  HourContribItem[]
-  OtherContribItem OtherContribItem[]
+  annualSalary      Float
+  dailyHours        Float
+  benRatePer        Float
+  HourContribItems  HourContribItem[]
+  OtherContribItems OtherContribItem[]
 
   @@unique([userId, partnerOrgId])
 }
