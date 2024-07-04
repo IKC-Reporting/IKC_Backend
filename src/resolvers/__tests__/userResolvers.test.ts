@@ -1,12 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import userResolvers from "../userResolvers";
-import { randomUUID } from "crypto";
 import prisma from "../../../libs/__mocks__/prisma";
+import userResolvers from "../userResolvers";
 
 vi.mock("../../../libs/prisma");
 
 const testUser = {
-  id: randomUUID(),
+  id: "testUserId",
   firstName: "newUser",
   lastName: "exLastname",
   siteAdmin: false,
@@ -14,7 +13,7 @@ const testUser = {
 };
 
 const testAdmin = {
-  id: randomUUID(),
+  id: "testAdminId",
   firstName: "newAdmin",
   lastName: "exLastname",
   siteAdmin: true,

@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
-import { User } from "../generated/graphql";
 import prisma from "../../libs/prisma.js";
+import { User } from "../generated/graphql";
 import { logger } from "../utils/Logger.js";
 
 export default {
