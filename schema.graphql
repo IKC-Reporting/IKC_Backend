@@ -19,13 +19,14 @@ type Mutation {
     firstName: String!
     lastName: String!
     isSiteAdmin: Boolean!
-  ): ID!
-  updateUser(userId: ID!, firstName: String, lastName: String): Boolean!
-  disableUser(siteAdminId: ID!, userId: ID!): Boolean!
+  ): ID
+  updateUser(userId: ID!, firstName: String, lastName: String): Boolean
+  disableUser(siteAdminId: ID!, userId: ID!): Boolean
+  reactivateUser(siteAdminId: ID!, userId: ID!): Boolean
 
   # TODO: Finish below mutations, may need to update inputs etc. as needed but commenting out to reduce generation time
   # # PartnerOrg mutations
-  createPartnerOrg(siteAdminId: ID!, adminId: ID!, name: String!): ID!
+  createPartnerOrg(siteAdminId: ID!, adminId: ID!, name: String!): ID
   createContributor(
     userId: ID!
     partnerOrgAdminId: ID!
@@ -33,22 +34,21 @@ type Mutation {
     annualSalary: Float!
     dailyHours: Float!
     benRatePer: Float!
-  ): Boolean!
-  addPartnerOrgAdmin(userId: ID!, newAdminID: ID!): Boolean!
-  removePartnerAdmin(userId: ID!, removedAdminID: ID!): Boolean!
+  ): Boolean
+  addPartnerOrgAdmin(userId: ID!, newAdminID: ID!): Boolean
+  removePartnerAdmin(userId: ID!, removedAdminID: ID!): Boolean
 
   # # hour log & contribution item mutations
-  createHourContribItem(contributorId: ID!, hours: Float, month: String): ID!
-  removeHourContribItem(itemId: ID!, userId: ID!): Boolean!
+  createHourContribItem(contributorId: ID!, hours: Float, month: String): ID
+  removeHourContribItem(itemId: ID!, userId: ID!): Boolean
 
   # # hour log generated in resolver
   addHourLogToItem(
     hourContribItemId: ID!
     hours: Float!
     month: String!
-  ): Boolean!
-
-  removeHourLogItem(hourLogId: ID!, userId: ID!): Boolean!
+  ): Boolean
+  removeHourLogItem(hourLogId: ID!, userId: ID!): Boolean
 
   # # other contribution item mutations
   createOtherContribItem(
@@ -57,8 +57,8 @@ type Mutation {
     contributionDate: DateTime!
     value: Float!
     details: String!
-  ): ID!
-  removeOtherContribItem(userId: ID!, itemId: ID!): Boolean!
+  ): ID
+  removeOtherContribItem(userId: ID!, itemId: ID!): Boolean
 
   # # IKC Report mutations
   createIKCReport(
@@ -68,16 +68,16 @@ type Mutation {
     reportEndDate: DateTime!
     employeeHourIds: [ID]
     otherContributionIds: [ID]
-  ): ID!
+  ): ID
   createSubmissionItem(
     userId: ID!
     ikcReportID: ID!
     submitterId: ID!
     submissionDate: DateTime!
-  ): ID!
-  submitIKCReport(userId: ID!, submissionItemId: ID!): Boolean!
-  approveIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
-  denyIKCReport(userId: ID!, submissionItemID: ID!): Boolean!
+  ): ID
+  submitIKCReport(userId: ID!, submissionItemId: ID!): Boolean
+  approveIKCReport(userId: ID!, submissionItemID: ID!): Boolean
+  denyIKCReport(userId: ID!, submissionItemID: ID!): Boolean
 
   # # Research Project mutations
   createResearchProject(
@@ -86,19 +86,15 @@ type Mutation {
     projectTitle: String!
     startDate: DateTime!
     endDate: DateTime!
-  ): ID!
-  addPartnerOrg(
-    userId: ID!
-    researchProjectId: ID!
-    partnerOrgId: ID!
-  ): Boolean!
+  ): ID
+  addPartnerOrg(userId: ID!, researchProjectId: ID!, partnerOrgId: ID!): Boolean
   removePartnerOrg(
     userId: ID!
     researchProjectId: ID!
     partnerOrgId: ID!
-  ): Boolean!
-  addNewAdmin(userId: ID!, newAdmin: ID!): Boolean!
-  removeAdmin(userId: ID!, adminId: ID!): Boolean!
+  ): Boolean
+  addNewAdmin(userId: ID!, newAdmin: ID!): Boolean
+  removeAdmin(userId: ID!, adminId: ID!): Boolean
 }
 
 type User {
@@ -106,6 +102,7 @@ type User {
   firstName: String!
   lastName: String!
   siteAdmin: Boolean!
+  active: Boolean
 }
 
 # TODO: implement below types , should be roughly in this order but commenting out to avoid issues with prisma schema being different from graphql
