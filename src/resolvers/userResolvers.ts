@@ -44,6 +44,11 @@ export default {
               siteAdmin: isSiteAdmin,
               id: randomUUID(),
               active: true,
+
+              contributorAssignments: null,
+              PartnerOrgAdminAssignments: null,
+              ResearchProjectAdminAssignments: null,
+              SubmissionItems: null,
             },
           });
 
