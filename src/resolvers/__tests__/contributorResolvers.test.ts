@@ -1,49 +1,17 @@
 import { describe, expect, it, vi } from "vitest";
 import prisma from "../../../libs/__mocks__/prisma";
+import {
+  testAdmin,
+  testContributor,
+  testPartnerOrg,
+  testUser,
+} from "../../__mock__";
 import contributorResolvers from "../contributorResolvers";
-
 vi.mock("../../../libs/prisma");
 
-const testUser = {
-  id: "testUserId",
-  firstName: "newUser",
-  lastName: "exLastname",
-  siteAdmin: false,
-  active: true,
-};
-
-const testAdmin = {
-  id: "testAdminId",
-  firstName: "newAdmin",
-  lastName: "exLastname",
-  siteAdmin: true,
-  active: true,
-};
-
-const testPartnerOrg = {
-  id: "testPartnerOrgId",
-  ResearchProject: null,
-  researchProjectId: null,
-  name: "example org name",
-  admins: [testUser],
-  contributors: null,
-};
-
-const testContributor = {
-  id: "testContributorId",
-
-  userId: testUser.id,
-  partnerOrgId: "partnerOrgID",
-  annualSalary: 45000,
-  dailyHours: 8,
-  benRatePer: 0.1,
-  HourContribItem: [null],
-  OtherContribItem: [null],
-};
-
 describe("ContributorResolver unit tests", () => {
-  describe("User Queries", () => {
-    describe("get user query tests", () => {
+  describe("Contributor Queries", () => {
+    describe("get contributor query tests", () => {
       it("should return a contributor with ID exists in the database", async () => {
         prisma.contributor.findUniqueOrThrow.mockResolvedValue({
           ...testContributor,
@@ -76,5 +44,134 @@ describe("ContributorResolver unit tests", () => {
     });
   });
 
-  describe.skip("User Mutations", () => {});
+  describe("Contributor Mutations", () => {
+    describe("createContributor tests", () => {
+      it("should create a contributor when given data & IDs", async () => {
+        prisma.partnerOrg.findUniqueOrThrow.mockResolvedValue({
+          ...testPartnerOrg,
+        });
+        prisma.user.findUniqueOrThrow.mockResolvedValue({
+          ...testAdmin,
+        });
+
+        prisma.contributor.create.mockResolvedValue({
+          ...testContributor,
+          id: testContributor.id,
+          userId: testUser.id,
+        });
+
+        prisma.user.update.mockResolvedValue({ ...testUser });
+
+        const contributorId =
+          await contributorResolvers.Mutation.createContributor(
+            null,
+            {
+              userId: testUser.id,
+              partnerOrgAdminId: testAdmin.id,
+              partnerOrgId: testContributor.partnerOrgId,
+              annualSalary: testContributor.annualSalary,
+              dailyHours: testContributor.dailyHours,
+              benRatePer: testContributor.benRatePer,
+            },
+            null,
+            null
+          );
+
+        expect(contributorId).toBe(testContributor.id);
+      });
+
+      it("should fail when given data & an invalid admin Id", async () => {
+        prisma.partnerOrg.findUniqueOrThrow.mockResolvedValue({
+          ...testPartnerOrg,
+        });
+        prisma.user.findUniqueOrThrow.mockResolvedValue({
+          ...testUser,
+        });
+
+        prisma.contributor.create.mockResolvedValue({ ...testContributor });
+
+        prisma.user.update.mockResolvedValue({ ...testUser });
+
+        const contributorId =
+          await contributorResolvers.Mutation.createContributor(
+            null,
+            {
+              userId: testUser.id,
+              partnerOrgAdminId: testUser.id,
+              partnerOrgId: testContributor.partnerOrgId,
+              annualSalary: testContributor.annualSalary,
+              dailyHours: testContributor.dailyHours,
+              benRatePer: testContributor.benRatePer,
+            },
+            null,
+            null
+          );
+
+        expect(contributorId).toBe(null);
+      });
+
+      it("should fail when db returns null / userId & returned user don't match", async () => {
+        prisma.partnerOrg.findUniqueOrThrow.mockResolvedValue({
+          ...testPartnerOrg,
+        });
+        prisma.user.findUniqueOrThrow.mockResolvedValue({
+          ...testAdmin,
+        });
+
+        // @ts-ignore
+        prisma.contributor.create.mockResolvedValue(null);
+
+        prisma.user.update.mockResolvedValue({ ...testUser });
+
+        const contributorId =
+          await contributorResolvers.Mutation.createContributor(
+            null,
+            {
+              userId: testUser.id,
+              partnerOrgAdminId: testAdmin.id,
+              partnerOrgId: testContributor.partnerOrgId,
+              annualSalary: testContributor.annualSalary,
+              dailyHours: testContributor.dailyHours,
+              benRatePer: testContributor.benRatePer,
+            },
+            null,
+            null
+          );
+
+        expect(contributorId).toBe(null);
+      });
+
+      it("should fail when db returns null / userId & returned user don't match", async () => {
+        prisma.partnerOrg.findUniqueOrThrow.mockResolvedValue({
+          ...testPartnerOrg,
+        });
+        prisma.user.findUniqueOrThrow.mockResolvedValue({
+          ...testAdmin,
+        });
+
+        prisma.contributor.create.mockImplementation(() => {
+          throw new Error("primsa db error");
+        });
+
+        prisma.user.update.mockResolvedValue({ ...testUser });
+
+        const contributorId =
+          await contributorResolvers.Mutation.createContributor(
+            null,
+            {
+              userId: testUser.id,
+              partnerOrgAdminId: testAdmin.id,
+              partnerOrgId: testContributor.partnerOrgId,
+              annualSalary: testContributor.annualSalary,
+              dailyHours: testContributor.dailyHours,
+              benRatePer: testContributor.benRatePer,
+            },
+            null,
+            null
+          );
+
+        expect(contributorId).toBe(null);
+      });
+    });
+  });
 });

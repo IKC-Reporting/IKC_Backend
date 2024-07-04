@@ -26,7 +26,7 @@ export default {
       }
     },
   },
-  Mutations: {
+  Mutation: {
     createContributor: async (parent, args, context, info) => {
       const {
         userId,
@@ -53,7 +53,9 @@ export default {
 
         if (
           admin?.id === partnerOrgAdminId &&
-          admin?.PartnerOrgAdminAssignments.includes({ ...partnerOrg })
+          admin?.PartnerOrgAdminAssignments.some(
+            (item) => item.id === partnerOrg.id
+          )
         ) {
           const contributor = await prisma.contributor.create({
             data: {
