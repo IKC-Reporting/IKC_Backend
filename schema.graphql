@@ -52,8 +52,9 @@ type Mutation {
 
   # # other contribution item mutations
   createOtherContribItem(
-    userId: ID!
-    itemName: String!
+    contributorId: ID!
+    ikcReportId: ID!
+    name: String!
     contributionDate: DateTime!
     value: Float!
     details: String!
