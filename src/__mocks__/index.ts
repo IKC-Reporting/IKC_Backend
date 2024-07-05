@@ -1,3 +1,5 @@
+const currentTime = new Date();
+
 export const testUser = {
   id: "testUserId",
   firstName: "newUser",
@@ -29,11 +31,28 @@ export const testContributor = {
 
   userId: testUser.id,
   partnerOrgId: "partnerOrgID",
-  annualSalary: 45000,
-  dailyHours: 8,
+  hourlyRate: 20,
   benRatePer: 0.1,
-  HourContribItem: [null],
-  OtherContribItem: [null],
+  contributions: null,
+};
+
+export const testContributionItem = {
+  id: "testContributionItem",
+  contributorId: testContributor.id,
+  ikcReportId: "testIKCReportId",
+  date: currentTime,
+  details: "some info on this item",
+  hourContribution: {
+    contribItemId: "testContributionItem",
+    hours: 3,
+    hourlyRate: 20,
+    benRatePer: 0.2,
+  },
+  otherContribution: {
+    contribItemId: "testContributionItem",
+    itemName: "example name",
+    value: 1234,
+  },
 };
 
 export const employeeHoursMock = [
