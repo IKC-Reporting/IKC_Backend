@@ -26,11 +26,9 @@ model Contributor {
   partnerOrgId String
   PartnerOrg   PartnerOrg @relation(fields: [partnerOrgId], references: [id])
 
-  annualSalary      Float
-  dailyHours        Float
-  benRatePer        Float
-  HourContribItems  HourContribItem[]
-  OtherContribItems OtherContribItem[]
+  hourlyRate    Float
+  benRatePer    Float
+  contributions ContribItem[]
 
   @@unique([userId, partnerOrgId])
 }
@@ -45,39 +43,6 @@ model PartnerOrg {
   contributors Contributor[]
 }
 
-model HourLog {
-  id                Int             @id @default(autoincrement())
-  HourContribItem   HourContribItem @relation(fields: [hourContribItemId], references: [id])
-  hourContribItemId Int
-
-  hours     Float
-  month     String
-  hourlyPay Float
-}
-
-model HourContribItem {
-  id            Int         @id @default(autoincrement())
-  contributor   Contributor @relation(fields: [contributorId], references: [id])
-  contributorId String
-  IKCReport     IKCReport?  @relation(fields: [iKCReportId], references: [id])
-  iKCReportId   String?
-
-  hoursPerMonth HourLog[]
-}
-
-model OtherContribItem {
-  id            Int         @id @default(autoincrement())
-  contributor   Contributor @relation(fields: [contributorId], references: [id])
-  contributorId String
-  ikcReport     IKCReport?  @relation(fields: [ikcReportId], references: [id])
-  ikcReportId   String?
-
-  name             String
-  contributionDate DateTime
-  value            Float
-  details          String
-}
-
 model SubmissionItem {
   id          Int       @id @default(autoincrement())
   submitter   User      @relation(fields: [submitterId], references: [id])
@@ -88,17 +53,46 @@ model SubmissionItem {
   submissionDate DateTime
 }
 
+model HourContribution {
+  ContribItem   ContribItem @relation(fields: [contribItemId], references: [id])
+  contribItemId String      @id @unique
+
+  hours      Float
+  hourlyRate Float
+  benRatePer Float
+}
+
+model OtherContribution {
+  ContribItem   ContribItem @relation(fields: [contribItemId], references: [id])
+  contribItemId String      @id @unique
+
+  itemName String
+  value    Float
+}
+
+model ContribItem {
+  id            String      @id
+  Contributor   Contributor @relation(fields: [contributorId], references: [id])
+  contributorId String
+  IKCReport     IKCReport?  @relation(fields: [ikcReportId], references: [id])
+  ikcReportId   String?
+
+  date              DateTime
+  details           String
+  hourContribution  HourContribution?
+  otherContribution OtherContribution?
+}
+
 model IKCReport {
   id                String           @id
   partnerOrgId      String
   ResearchProject   ResearchProject? @relation(fields: [researchProjectId], references: [id])
   researchProjectId String?
 
-  reportStartDate    DateTime
-  reportEndDate      DateTime
-  submissionHistory  SubmissionItem[]
-  employeeHours      HourContribItem[]
-  otherContributions OtherContribItem[]
+  reportStartDate   DateTime
+  reportEndDate     DateTime
+  submissionHistory SubmissionItem[]
+  Contributions     ContribItem[]
 }
 
 model ResearchProject {

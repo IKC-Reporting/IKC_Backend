@@ -1,18 +1,20 @@
 import { Resolvers } from "../generated/graphql";
+import contributionResolvers from "./contributionResolvers";
 import contributorResolvers from "./contributorResolvers";
-import otherContribItemResolvers from "./otherContribItemResolvers";
 import userResolvers from "./userResolvers.js";
 
 const resolvers: Resolvers = {
   Query: {
     ...userResolvers.Query,
     ...contributorResolvers.Query,
-    ...otherContribItemResolvers.Query,
+    ...contributionResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
     ...contributorResolvers.Mutation,
-    ...otherContribItemResolvers.Mutation,
+    ...contributionResolvers.Mutation,
   },
 };
 export default resolvers;
+
+// val: async (parent, args, context, info) =>{const {}=args;return null}
