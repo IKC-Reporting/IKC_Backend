@@ -5,7 +5,7 @@ import {
   testContributor,
   testPartnerOrg,
   testUser,
-} from "../../__mock__";
+} from "../../__mocks__/index";
 import contributorResolvers from "../contributorResolvers";
 vi.mock("../../../libs/prisma");
 
@@ -145,15 +145,9 @@ describe("ContributorResolver unit tests", () => {
         prisma.partnerOrg.findUniqueOrThrow.mockResolvedValue({
           ...testPartnerOrg,
         });
-        prisma.user.findUniqueOrThrow.mockResolvedValue({
-          ...testAdmin,
-        });
-
-        prisma.contributor.create.mockImplementation(() => {
+        prisma.user.findUniqueOrThrow.mockImplementation(() => {
           throw new Error("primsa db error");
         });
-
-        prisma.user.update.mockResolvedValue({ ...testUser });
 
         const contributorId =
           await contributorResolvers.Mutation.createContributor(

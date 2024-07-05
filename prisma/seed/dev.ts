@@ -13,6 +13,7 @@ async function main() {
       firstName: "test",
       lastName: "admin",
       siteAdmin: true,
+      active: true,
     },
   });
 
@@ -25,6 +26,7 @@ async function main() {
       firstName: "test",
       lastName: "nonAdmin",
       siteAdmin: false,
+      active: true,
     },
   });
 

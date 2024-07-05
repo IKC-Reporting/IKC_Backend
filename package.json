@@ -10,7 +10,7 @@
     "start": "npm run compile && node ./dist/src/index.js",
     "dev-seed": "tsx ./prisma/seed/dev.ts",
     "dev": "npm run dev-seed && npm run generate && tsx watch ./src/index.ts",
-    "test": "vitest",
+    "test": "vitest --coverage",
     "coverage": "vitest run --coverage"
   },
   "license": "Apache-2.0",

@@ -10,8 +10,15 @@ export default defineConfig({
       provider: "v8",
       exclude: [
         // says there is an error but that is not the case
+        // @ts-ignore
         ...configDefaults.coverage.exclude,
-        "tailwind.config.ts",
+        "*.config.ts",
+        "codegen.ts",
+        "**/__mocks__/*",
+        "prisma/*",
+        "**/prisma.ts",
+        // ignoring resolvers for now as it only passes through and we will likely not be adding any tests to it
+        "src/resolvers/index.ts",
       ],
     },
   },
