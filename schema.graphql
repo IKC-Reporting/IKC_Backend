@@ -4,9 +4,7 @@ type Query {
   user(id: ID!): User
   contributor(id: ID!): Contributor
   partnerOrg(id: ID!): PartnerOrg
-  hourContribItem(id: ID!): HourContribItem
-  hourLog(id: ID!): HourLog
-  otherContribItem(id: ID!): OtherContribItem
+  contribution(id: ID!): Contribution
   ikcReport(id: ID!): IKCReport
   submissionItem(id: ID!): SubmissionItem
   researchProject(id: ID!): ResearchProject
@@ -31,34 +29,31 @@ type Mutation {
     userId: ID!
     partnerOrgAdminId: ID!
     partnerOrgId: ID!
-    annualSalary: Float!
-    dailyHours: Float!
+    hourlyRate: Float!
     benRatePer: Float!
-  ): Boolean
+  ): ID!
   addPartnerOrgAdmin(userId: ID!, newAdminID: ID!): Boolean
   removePartnerAdmin(userId: ID!, removedAdminID: ID!): Boolean
 
-  # # hour log & contribution item mutations
-  createHourContribItem(contributorId: ID!, hours: Float, month: String): ID
-  removeHourContribItem(itemId: ID!, userId: ID!): Boolean
+  # # contribution item mutations (create is for each subitem as you cannot have two for one contribution)
+  createHourContribution(
+    contributorId: ID!
 
-  # # hour log generated in resolver
-  addHourLogToItem(
-    hourContribItemId: ID!
+    date: DateTime!
+    details: String
+
     hours: Float!
-    month: String!
-  ): Boolean
-  removeHourLogItem(hourLogId: ID!, userId: ID!): Boolean
-
-  # # other contribution item mutations
-  createOtherContribItem(
-    userId: ID!
-    itemName: String!
-    contributionDate: DateTime!
-    value: Float!
-    details: String!
   ): ID
-  removeOtherContribItem(userId: ID!, itemId: ID!): Boolean
+  createOtherContribution(
+    contributorId: ID!
+
+    date: DateTime!
+    details: String
+
+    itemName: String!
+    value: Float!
+  ): ID
+  removeContribution(userId: ID!, contributionId: ID!): Boolean
 
   # # IKC Report mutations
   createIKCReport(
@@ -112,12 +107,8 @@ type Contributor {
   userId: ID!
   partnerOrgId: ID!
 
-  annualSalary: Float!
-  dailyHours: Float!
+  hourlyRate: Float!
   benRatePer: Float!
-
-  hourContribItems: [HourContribItem]
-  otherContribItems: [OtherContribItem]
 }
 
 type PartnerOrg {
@@ -127,33 +118,32 @@ type PartnerOrg {
   contributors: [Contributor]
 }
 
-type HourLog {
-  id: ID
+# id for hourly and other are foreign keys with contrib item since 1-1
+type HourContribution {
   hours: Float!
-  month: String!
-  hourlyPay: Float
+  hourlyRate: Float!
+  benRatePer: Float!
 }
 
-type HourContribItem {
-  id: ID
-  contributor: Contributor!
-  hoursPerMonth: [HourLog]
-}
-
-type OtherContribItem {
-  id: ID
-  contributor: Contributor!
-  name: String!
-  contributionDate: DateTime!
+type OtherContribution {
+  itemName: String!
   value: Float!
-  details: String!
+}
+
+type Contribution {
+  id: ID!
+  date: DateTime!
+  details: String
+
+  hourContribution: HourContribution
+  otherContribution: OtherContribution
 }
 
 type SubmissionItem {
   id: ID
-  submitterId: ID!
-  ikcReportID: ID!
-  submissionDate: DateTime!
+  submitterId: ID
+  ikcReportID: ID
+  submissionDate: DateTime
 }
 
 type IKCReport {
@@ -162,15 +152,14 @@ type IKCReport {
   submissionHistory: [SubmissionItem]
   reportStartDate: DateTime!
   reportEndDate: DateTime!
-  employeeHours: [HourContribItem]
-  otherContributions: [OtherContribItem]
+  contributions: [Contribution]
 }
 
 type ResearchProject {
   id: ID!
-  projectTitle: String!
-  startDate: DateTime!
-  endDate: DateTime!
+  projectTitle: String
+  startDate: DateTime
+  endDate: DateTime
   admins: [User]
   projectPartners: [PartnerOrg]
   ikcReports: [IKCReport]

@@ -14,8 +14,6 @@ export default {
           where: { id },
           include: {
             User: true,
-            HourContribItems: true,
-            OtherContribItems: true,
           },
         });
 
@@ -32,8 +30,7 @@ export default {
         userId,
         partnerOrgAdminId,
         partnerOrgId,
-        annualSalary,
-        dailyHours,
+        hourlyRate,
         benRatePer,
       } = args;
 
@@ -64,12 +61,9 @@ export default {
               userId,
               partnerOrgId,
 
-              annualSalary,
-              dailyHours,
+              hourlyRate,
               benRatePer,
-
-              HourContribItems: null,
-              OtherContribItems: null,
+              contributions: null,
             },
           });
 
@@ -82,7 +76,7 @@ export default {
 
           if (contributor?.userId === user?.id) {
             logger.info(
-              `added contributor ${contributor.id} with data: { id: ${contributor.id}, userId: ${contributor.userId}, partnerOrgId: ${contributor.partnerOrgId}, annualSalary: ${contributor.annualSalary}, dailyHours: ${contributor.dailyHours}, benRatePer: ${contributor.benRatePer} }`
+              `added contributor ${contributor.id} with data: { id: ${contributor.id}, userId: ${contributor.userId}, partnerOrgId: ${contributor.partnerOrgId}, hourlyRate: ${contributor.hourlyRate}, benRatePer: ${contributor.benRatePer} }`
             );
             return contributor.id;
           } else {
