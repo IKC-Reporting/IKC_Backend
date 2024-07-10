@@ -111,3 +111,13 @@ export const otherContributionsMock = [
     item: "Other",
   },
 ];
+
+export const testResearchProject = {
+  id: "researchProjectId",
+  projectTitle: "Research Project",
+  startDate: new Date("2024-01-01"),
+  endDate: new Date("2024-12-31"),
+  admins: [testUser],
+  projectPartners: [testPartnerOrg],
+  ikcReports: [],
+};
