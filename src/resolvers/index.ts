@@ -1,6 +1,7 @@
 import { Resolvers } from "../generated/graphql";
 import contributionResolvers from "./contributionResolvers";
 import contributorResolvers from "./contributorResolvers";
+import ikcReportResolvers from "./ikcReportResolvers";
 import userResolvers from "./userResolvers.js";
 
 const resolvers: Resolvers = {
@@ -8,11 +9,13 @@ const resolvers: Resolvers = {
     ...userResolvers.Query,
     ...contributorResolvers.Query,
     ...contributionResolvers.Query,
+    ...ikcReportResolvers.Query,
   },
   Mutation: {
     ...userResolvers.Mutation,
     ...contributorResolvers.Mutation,
     ...contributionResolvers.Mutation,
+    ...ikcReportResolvers.Mutation,
   },
 };
 export default resolvers;

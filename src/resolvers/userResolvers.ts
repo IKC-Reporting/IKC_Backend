@@ -48,7 +48,7 @@ export default {
               contributorAssignments: null,
               PartnerOrgAdminAssignments: null,
               ResearchProjectAdminAssignments: null,
-              SubmissionItems: null,
+              Submissions: null,
             },
           });
 

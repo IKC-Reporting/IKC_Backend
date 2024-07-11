@@ -15,7 +15,7 @@ model User {
   contributorAssignments          Contributor[]
   PartnerOrgAdminAssignments      PartnerOrg[]
   ResearchProjectAdminAssignments ResearchProject[]
-  SubmissionItems                 SubmissionItem[]
+  Submissions                     IKCReport[]
 }
 
 model Contributor {
@@ -41,16 +41,6 @@ model PartnerOrg {
   name         String
   admins       User[]
   contributors Contributor[]
-}
-
-model SubmissionItem {
-  id          Int       @id @default(autoincrement())
-  submitter   User      @relation(fields: [submitterId], references: [id])
-  submitterId String
-  ikcReport   IKCReport @relation(fields: [ikcReportId], references: [id])
-  ikcReportId String
-
-  submissionDate DateTime
 }
 
 model HourContribution {
@@ -88,11 +78,16 @@ model IKCReport {
   partnerOrgId      String
   ResearchProject   ResearchProject? @relation(fields: [researchProjectId], references: [id])
   researchProjectId String?
-
   reportStartDate   DateTime
   reportEndDate     DateTime
-  submissionHistory SubmissionItem[]
   Contributions     ContribItem[]
+  submitterId       String?
+  submitter         User?            @relation(fields: [userId], references: [id])
+  submissionDate    DateTime?
+  isApproved        Boolean?
+  approverId        String?
+  approvalDate      DateTime?
+  userId            String
 }
 
 model ResearchProject {

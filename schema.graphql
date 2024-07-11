@@ -6,7 +6,6 @@ type Query {
   partnerOrg(id: ID!): PartnerOrg
   contribution(id: ID!): Contribution
   ikcReport(id: ID!): IKCReport
-  submissionItem(id: ID!): SubmissionItem
   researchProject(id: ID!): ResearchProject
 }
 
@@ -64,15 +63,14 @@ type Mutation {
     employeeHourIds: [ID]
     otherContributionIds: [ID]
   ): ID
-  createSubmissionItem(
+  submitIKCReport(
     userId: ID!
     ikcReportID: ID!
     submitterId: ID!
     submissionDate: DateTime!
   ): ID
-  submitIKCReport(userId: ID!, submissionItemId: ID!): Boolean
-  approveIKCReport(userId: ID!, submissionItemID: ID!): Boolean
-  denyIKCReport(userId: ID!, submissionItemID: ID!): Boolean
+  approveIKCReport(userId: ID!, ikcReportID: ID!): Boolean
+  denyIKCReport(userId: ID!, ikcReportID: ID!): Boolean
 
   # # Research Project mutations
   createResearchProject(
@@ -139,20 +137,16 @@ type Contribution {
   otherContribution: OtherContribution
 }
 
-type SubmissionItem {
-  id: ID
-  submitterId: ID
-  ikcReportID: ID
-  submissionDate: DateTime
-}
-
 type IKCReport {
   id: ID!
   partnerOrgId: ID!
-  submissionHistory: [SubmissionItem]
   reportStartDate: DateTime!
   reportEndDate: DateTime!
   contributions: [Contribution]
+  submitterId: ID
+  isApproved: Boolean
+  approverId: ID
+  approvalDate: DateTime!
 }
 
 type ResearchProject {

@@ -1,4 +1,6 @@
-const currentTime = new Date();
+import { randomUUID } from "crypto";
+import prisma from "../../libs/prisma";
+import { logger } from "../utils/Logger";
 
 export const testUser = {
   id: "testUserId",
@@ -40,7 +42,7 @@ export const testContributionItem = {
   id: "testContributionItem",
   contributorId: testContributor.id,
   ikcReportId: "testIKCReportId",
-  date: currentTime,
+  date: new Date(),
   details: "some info on this item",
   hourContribution: {
     contribItemId: "testContributionItem",
@@ -53,6 +55,20 @@ export const testContributionItem = {
     itemName: "example name",
     value: 1234,
   },
+};
+
+export const testIKCReport = {
+  id: "testId",
+  partnerOrgId: "partnerOrgId",
+  researchProjectId: null,
+  reportStartDate: new Date(),
+  reportEndDate: new Date(),
+  submitterId: "submitterId",
+  submissionDate: new Date(),
+  isApproved: true,
+  approverId: null,
+  approvalDate: null,
+  userId: "userId",
 };
 
 export const employeeHoursMock = [
