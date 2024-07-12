@@ -88,43 +88,6 @@ export const getIKCReportArray = (ikcReports): IkcReport[] => {
   }, []);
 };
 
-// id
-// date
-// details
-//   hourContribution
-// otherContribution
-
-/**
-.reduce((previousValue, currentValue) => {
-    return [...previousValue, {}];
-  }, []);
-
-include: {
-            admins: true,
-            projectPartners: {
-              select: { id: true, name: true, contributors: true },
-            },
-            ikcReports: {
-              select: {
-                id: true,
-                partnerOrgId: true,
-                reportStartDate: true,
-                reportEndDate: true,
-                Contributions: {
-                  select: {
-                    id: true,
-                    contributorId: true,
-                    date: true,
-                    details: true,
-                    hourContribution: true,
-                    otherContribution: true,
-                  },
-                },
-                submitterId: true,
-                isApproved: true,
-                approverId: true,
-                approvalDate: true,
-              },
-            },
-          },
- */
+// .reduce((previousValue, currentValue) => {
+//     return [...previousValue, {}];
+//   }, []);
