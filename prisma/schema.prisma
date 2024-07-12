@@ -21,10 +21,12 @@ model User {
 model Contributor {
   id String @id
 
-  userId       String
-  User         User       @relation(fields: [userId], references: [id])
-  partnerOrgId String
-  PartnerOrg   PartnerOrg @relation(fields: [partnerOrgId], references: [id])
+  userId            String
+  User              User            @relation(fields: [userId], references: [id])
+  partnerOrgId      String
+  PartnerOrg        PartnerOrg      @relation(fields: [partnerOrgId], references: [id])
+  researchProjectId String
+  ResearchOrg       ResearchProject @relation(fields: [researchProjectId], references: [id])
 
   hourlyRate    Float
   benRatePer    Float
@@ -58,6 +60,7 @@ model OtherContribution {
 
   itemName String
   value    Float
+  items    Int
 }
 
 model ContribItem {
@@ -99,6 +102,7 @@ model ResearchProject {
   admins          User[]
   projectPartners PartnerOrg[]
   ikcReports      IKCReport[]
+  Contributor     Contributor[]
 }
 
 generator client {

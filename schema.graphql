@@ -28,11 +28,12 @@ type Mutation {
     userId: ID!
     partnerOrgAdminId: ID!
     partnerOrgId: ID!
+    researchProjectId: ID!
     hourlyRate: Float!
     benRatePer: Float!
   ): ID!
-  addPartnerOrgAdmin(userId: ID!, newAdminID: ID!): Boolean
-  removePartnerAdmin(userId: ID!, removedAdminID: ID!): Boolean
+  addPartnerOrgAdmin(userId: ID!, orgId: ID!, newAdminID: ID!): Boolean
+  removePartnerAdmin(userId: ID!, orgId: ID!, removedAdminID: ID!): Boolean
 
   # # contribution item mutations (create is for each subitem as you cannot have two for one contribution)
   createHourContribution(
@@ -51,6 +52,7 @@ type Mutation {
 
     itemName: String!
     value: Float!
+    items: Int!
   ): ID
   removeContribution(userId: ID!, contributionId: ID!): Boolean
 
@@ -65,12 +67,12 @@ type Mutation {
   ): ID
   submitIKCReport(
     userId: ID!
-    ikcReportID: ID!
+    ikcReportId: ID!
     submitterId: ID!
     submissionDate: DateTime!
   ): ID
-  approveIKCReport(userId: ID!, ikcReportID: ID!): Boolean
-  denyIKCReport(userId: ID!, ikcReportID: ID!): Boolean
+  approveIKCReport(userId: ID!, ikcReportId: ID!): Boolean
+  denyIKCReport(userId: ID!, ikcReportId: ID!): Boolean
 
   # # Research Project mutations
   createResearchProject(
@@ -103,7 +105,9 @@ type User {
 type Contributor {
   id: ID
   userId: ID!
+
   partnerOrgId: ID!
+  researchOrgId: ID!
 
   hourlyRate: Float!
   benRatePer: Float!
@@ -126,6 +130,7 @@ type HourContribution {
 type OtherContribution {
   itemName: String!
   value: Float!
+  items: Int!
 }
 
 type Contribution {
@@ -149,12 +154,18 @@ type IKCReport {
   approvalDate: DateTime!
 }
 
+# reduce output as research proj don't need to know org admins
+type PartnerOrgItem {
+  id: ID!
+  name: String!
+  contributors: [Contributor]
+}
 type ResearchProject {
   id: ID!
   projectTitle: String
   startDate: DateTime
   endDate: DateTime
-  admins: [User]
-  projectPartners: [PartnerOrg]
+  admins: [ID]
+  projectPartners: [PartnerOrgItem]
   ikcReports: [IKCReport]
 }

@@ -17,7 +17,14 @@ export default {
           },
         });
 
-        return { ...contributor };
+        return {
+          id: contributor.id,
+          userId: contributor.userId,
+          partnerOrgId: contributor.partnerOrgId,
+          researchOrgId: contributor.researchProjectId,
+          hourlyRate: contributor.hourlyRate,
+          benRatePer: contributor.benRatePer,
+        };
       } catch (error) {
         logger.error(`error with contributor query: ${error}`);
         return null;
@@ -30,6 +37,7 @@ export default {
         userId,
         partnerOrgAdminId,
         partnerOrgId,
+        researchProjectId,
         hourlyRate,
         benRatePer,
       } = args;
@@ -49,41 +57,45 @@ export default {
         });
 
         if (
-          admin?.id === partnerOrgAdminId &&
-          admin?.PartnerOrgAdminAssignments.some(
+          admin?.id !== partnerOrgAdminId ||
+          !admin?.PartnerOrgAdminAssignments.some(
             (item) => item.id === partnerOrg.id
           )
         ) {
-          const contributor = await prisma.contributor.create({
-            data: {
-              id: randomUUID(),
+          throw new Error(
+            "organization admin invalid permissions to create contributor"
+          );
+        }
 
-              userId,
-              partnerOrgId,
+        const contributor = await prisma.contributor.create({
+          data: {
+            id: randomUUID(),
 
-              hourlyRate,
-              benRatePer,
-              contributions: null,
-            },
-          });
+            userId,
+            partnerOrgId,
+            researchProjectId,
+            hourlyRate,
+            benRatePer,
+            contributions: null,
+          },
+        });
 
-          const user = await prisma.user.update({
-            where: { id: userId },
-            data: {
-              contributorAssignments: { connect: { id: contributor.id } },
-            },
-          });
+        const user = await prisma.user.update({
+          where: { id: userId },
+          data: {
+            contributorAssignments: { connect: { id: contributor.id } },
+          },
+        });
 
-          if (contributor?.userId === user?.id) {
-            logger.info(
-              `added contributor ${contributor.id} with data: { id: ${contributor.id}, userId: ${contributor.userId}, partnerOrgId: ${contributor.partnerOrgId}, hourlyRate: ${contributor.hourlyRate}, benRatePer: ${contributor.benRatePer} }`
-            );
-            return contributor.id;
-          } else {
-            throw new Error(
-              `contributor userId not matching user id in database`
-            );
-          }
+        if (contributor?.userId === user?.id) {
+          logger.info(
+            `added contributor ${contributor.id} with data: { id: ${contributor.id}, userId: ${contributor.userId}, partnerOrgId: ${contributor.partnerOrgId}, hourlyRate: ${contributor.hourlyRate}, benRatePer: ${contributor.benRatePer} }`
+          );
+          return contributor.id;
+        } else {
+          throw new Error(
+            `contributor userId not matching user id in database`
+          );
         }
       } catch (error) {
         logger.error(`error creating contributor: ${error}`);

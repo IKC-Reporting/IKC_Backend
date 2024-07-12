@@ -33,6 +33,7 @@ export default {
           otherContribution: {
             itemName: contribution.otherContribution.itemName,
             value: contribution.otherContribution.value,
+            items: contribution.otherContribution.items,
           },
         };
       } catch (error) {
@@ -85,7 +86,7 @@ export default {
       }
     },
     createOtherContribution: async (parent, args, context, info) => {
-      const { contributorId, date, details, itemName, value } = args;
+      const { contributorId, date, details, itemName, value, items } = args;
 
       try {
         const contributor = await prisma.contributor.findUniqueOrThrow({
@@ -107,6 +108,7 @@ export default {
                 contribItemId: newContribution.id,
                 itemName,
                 value,
+                items,
               },
             });
             if (newOtherContribution) {
