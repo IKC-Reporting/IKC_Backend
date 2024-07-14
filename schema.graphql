@@ -32,8 +32,12 @@ type Mutation {
     hourlyRate: Float!
     benRatePer: Float!
   ): ID!
-  addPartnerOrgAdmin(userId: ID!, orgId: ID!, newAdminID: ID!): Boolean
-  removePartnerOrgAdmin(userId: ID!, orgId: ID!, removedAdminID: ID!): Boolean
+  addPartnerOrgAdmin(orgAdminId: ID!, orgId: ID!, newAdminId: ID!): Boolean
+  removePartnerOrgAdmin(
+    orgAdminId: ID!
+    orgId: ID!
+    removedAdminId: ID!
+  ): Boolean
 
   # # contribution item mutations (create is for each subitem as you cannot have two for one contribution)
   createHourContribution(

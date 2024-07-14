@@ -39,8 +39,16 @@ async function main() {
       admins: { connect: { id: "88c150cc-1235-4523-9224-65caafa935eb" } },
     },
   });
-}
 
+  await prisma.partnerOrg.create({
+    data: {
+      id: "f27e212e-76c2-4977-8fd5-9b5367a31b68",
+      name: "another test partner org",
+      admins: { connect: { id: "402a8052-9c4d-496e-bd17-d25f3d0c2bf7" } },
+    },
+  });
+}
+//
 main()
   .then(async () => {
     await prisma.$disconnect();

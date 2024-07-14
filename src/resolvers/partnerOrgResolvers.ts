@@ -65,7 +65,7 @@ export default {
       }
     },
     addPartnerOrgAdmin: async (parent, args, context, info) => {
-      const { userId, orgId, newAdminId } = args;
+      const { orgAdminId, orgId, newAdminId } = args;
 
       logger.info(
         `Adding admin ${newAdminId} to partner organization ${orgId}`
@@ -73,24 +73,28 @@ export default {
 
       try {
         const user = await prisma.user.findUniqueOrThrow({
-          where: { id: userId },
+          where: { id: orgAdminId },
           include: { PartnerOrgAdminAssignments: true },
         });
 
         if (
           !user.PartnerOrgAdminAssignments.some(
             (partnerOrg) => partnerOrg.id === orgId
-          )
+          ) &&
+          !user.siteAdmin
         ) {
           throw new Error(
             "user is not admin of organization, permission denied"
           );
         }
+        const newAdmin = await prisma.user.findUniqueOrThrow({
+          where: { id: newAdminId },
+        });
 
         await prisma.partnerOrg.update({
           where: { id: orgId },
           data: {
-            admins: { set: newAdminId },
+            admins: { connect: newAdmin },
           },
         });
 
@@ -110,7 +114,7 @@ export default {
       }
     },
     removePartnerOrgAdmin: async (parent, args, context, info) => {
-      const { userId, orgId, removedAdminId } = args;
+      const { orgAdminId, orgId, removedAdminId } = args;
 
       logger.info(
         `Removing admin ${removedAdminId} from partner organization ${orgId}`
@@ -118,14 +122,15 @@ export default {
 
       try {
         const user = await prisma.user.findUniqueOrThrow({
-          where: { id: userId },
+          where: { id: orgAdminId },
           include: { PartnerOrgAdminAssignments: true },
         });
 
         if (
           !user.PartnerOrgAdminAssignments.some(
             (partnerOrg) => partnerOrg.id === orgId
-          )
+          ) &&
+          !user.siteAdmin
         ) {
           throw new Error(
             "user is not admin of organization, permission denied"
@@ -137,7 +142,7 @@ export default {
           include: { admins: true },
         });
 
-        const newAdminList = partnerOrgAdmins.admins.find(
+        const newAdminList = partnerOrgAdmins.admins.filter(
           (admin) => admin.id != removedAdminId
         );
 
