@@ -33,7 +33,7 @@ type Mutation {
     benRatePer: Float!
   ): ID!
   addPartnerOrgAdmin(userId: ID!, orgId: ID!, newAdminID: ID!): Boolean
-  removePartnerAdmin(userId: ID!, orgId: ID!, removedAdminID: ID!): Boolean
+  removePartnerOrgAdmin(userId: ID!, orgId: ID!, removedAdminID: ID!): Boolean
 
   # # contribution item mutations (create is for each subitem as you cannot have two for one contribution)
   createHourContribution(
@@ -88,8 +88,8 @@ type Mutation {
     researchProjectId: ID!
     partnerOrgId: ID!
   ): Boolean
-  addNewAdmin(userId: ID!, newAdmin: ID!): Boolean
-  removeAdmin(userId: ID!, adminId: ID!): Boolean
+  addResearchProjectAdmin(userId: ID!, newAdmin: ID!): Boolean
+  removeResearchProjectAdmin(userId: ID!, adminId: ID!): Boolean
 }
 
 type User {

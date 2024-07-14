@@ -141,7 +141,7 @@ export default {
         return false;
       }
     },
-    addNewAdmin: async (parent, args, context, info) => {
+    addResearchProjectAdmin: async (parent, args, context, info) => {
       const { userId, newAdmin } = args;
 
       logger.info(`Adding new admin ${newAdmin} to research project ${userId}`);
@@ -162,7 +162,7 @@ export default {
         return false;
       }
     },
-    removeAdmin: async (parent, args, context, info) => {
+    removeResearchProjectAdmin: async (parent, args, context, info) => {
       const { userId, adminId } = args;
 
       logger.info(`Removing admin ${adminId} from research project ${userId}`);

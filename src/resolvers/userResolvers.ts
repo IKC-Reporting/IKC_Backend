@@ -44,11 +44,6 @@ export default {
               siteAdmin: isSiteAdmin,
               id: randomUUID(),
               active: true,
-
-              contributorAssignments: null,
-              PartnerOrgAdminAssignments: null,
-              ResearchProjectAdminAssignments: null,
-              Submissions: null,
             },
           });
 
@@ -80,6 +75,14 @@ export default {
         `updating user ${userId} with new firstName: ${firstName}, lastName: ${lastName}`
       );
       try {
+        const activeUserCheck = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+        });
+
+        if (activeUserCheck.active === false) {
+          throw new Error(`unable to update ${userId} user deactivated`);
+        }
+
         await prisma.user.update({
           where: { id: userId },
           data: { firstName, lastName },
@@ -89,7 +92,11 @@ export default {
           where: { id: userId },
         });
 
-        if (user.firstName === firstName && user.lastName === lastName) {
+        // check if user name is updated, assuming input was not null
+        if (
+          (firstName === undefined || user.firstName === firstName) &&
+          (lastName === undefined || user.lastName === lastName)
+        ) {
           logger.info(`successfully updated user`);
           return true;
         } else {
@@ -113,22 +120,25 @@ export default {
           where: { id: siteAdminId, active: true },
         });
 
-        if (creator?.siteAdmin) {
-          // if they do then toggle the active state to false
-          const user = await prisma.user.update({
-            where: { id: userId },
-            data: { active: false },
-          });
+        if (!creator?.siteAdmin) {
+          throw new Error(
+            `cannot deactivate ${userId}, ${siteAdminId} not site admin`
+          );
+        }
+        // if they do then toggle the active state to false
+        const user = await prisma.user.update({
+          where: { id: userId },
+          data: { active: false },
+        });
 
-          if (!user.active) {
-            logger.info(`successfully disabled user ${user.id}`);
-            return true;
-          } else {
-            logger.warn(
-              `failure to disable user, incorrect state returned from prisma response for user ${user.id}`
-            );
-            return false;
-          }
+        if (!user.active) {
+          logger.info(`successfully disabled user ${user.id}`);
+          return true;
+        } else {
+          logger.warn(
+            `failure to disable user, incorrect state returned from prisma response for user ${user.id}`
+          );
+          return false;
         }
       } catch (error) {
         logger.error(`error disabling user: ${error}`);
@@ -145,22 +155,24 @@ export default {
           where: { id: siteAdminId, active: true },
         });
 
-        if (creator?.siteAdmin) {
-          // if they do then toggle the active state to true
-          const user = await prisma.user.update({
-            where: { id: userId },
-            data: { active: true },
-          });
+        if (!creator?.siteAdmin) {
+          throw new Error(`invalid site admin credentials for ${siteAdminId}`);
+        }
 
-          if (user.active) {
-            logger.info(`successfully enabled user ${user.id}`);
-            return true;
-          } else {
-            logger.warn(
-              `failure to enable user, incorrect state returned from prisma response for user ${user.id}`
-            );
-            return false;
-          }
+        // if they do then toggle the active state to true
+        const user = await prisma.user.update({
+          where: { id: userId },
+          data: { active: true },
+        });
+
+        if (user.active) {
+          logger.info(`successfully enabled user ${user.id}`);
+          return true;
+        } else {
+          logger.warn(
+            `failure to enable user, incorrect state returned from prisma response for user ${user.id}`
+          );
+          return false;
         }
       } catch (error) {
         logger.error(`error disabling user: ${error}`);

@@ -1,13 +1,10 @@
-import { randomUUID } from "crypto";
-import prisma from "../../libs/prisma";
-import { logger } from "../utils/Logger";
-
 export const testUser = {
   id: "testUserId",
   firstName: "newUser",
   lastName: "exLastname",
   siteAdmin: false,
   active: true,
+  PartnerOrgAdminAssignments: [{ id: "testPartnerOrgId" }],
 };
 
 export const testAdmin = {
@@ -19,15 +16,6 @@ export const testAdmin = {
   PartnerOrgAdminAssignments: [{ id: "testPartnerOrgId" }],
 };
 
-export const testPartnerOrg = {
-  id: "testPartnerOrgId",
-  ResearchProject: null,
-  researchProjectId: null,
-  name: "example org name",
-  admins: [testAdmin],
-  contributors: null,
-};
-
 export const testContributor = {
   id: "testContributorId",
 
@@ -36,6 +24,15 @@ export const testContributor = {
   hourlyRate: 20,
   benRatePer: 0.1,
   contributions: null,
+};
+
+export const testPartnerOrg = {
+  id: "testPartnerOrgId",
+  ResearchProject: null,
+  researchProjectId: null,
+  name: "example org name",
+  admins: [testAdmin],
+  contributors: [testContributor],
 };
 
 export const testContributionItem = {
@@ -69,6 +66,16 @@ export const testIKCReport = {
   approverId: null,
   approvalDate: null,
   userId: "userId",
+};
+
+export const testResearchProject = {
+  id: "researchProjectId",
+  projectTitle: "Research Project",
+  startDate: new Date("2024-01-01"),
+  endDate: new Date("2024-12-31"),
+  admins: [testUser],
+  projectPartners: [testPartnerOrg],
+  ikcReports: [],
 };
 
 export const employeeHoursMock = [
@@ -127,13 +134,3 @@ export const otherContributionsMock = [
     item: "Other",
   },
 ];
-
-export const testResearchProject = {
-  id: "researchProjectId",
-  projectTitle: "Research Project",
-  startDate: new Date("2024-01-01"),
-  endDate: new Date("2024-12-31"),
-  admins: [testUser],
-  projectPartners: [testPartnerOrg],
-  ikcReports: [],
-};
