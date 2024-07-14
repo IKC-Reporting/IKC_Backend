@@ -32,23 +32,27 @@ async function main() {
   });
 
   console.log("adding partner org");
-  await prisma.partnerOrg.create({
-    data: {
+  await prisma.partnerOrg.upsert({
+    where: { id: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576" },
+    update: {},
+    create: {
       id: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576",
       name: "test partner org",
       admins: { connect: { id: "88c150cc-1235-4523-9224-65caafa935eb" } },
     },
   });
 
-  await prisma.partnerOrg.create({
-    data: {
+  await prisma.partnerOrg.upsert({
+    where: { id: "f27e212e-76c2-4977-8fd5-9b5367a31b68" },
+    update: {},
+    create: {
       id: "f27e212e-76c2-4977-8fd5-9b5367a31b68",
       name: "another test partner org",
       admins: { connect: { id: "402a8052-9c4d-496e-bd17-d25f3d0c2bf7" } },
     },
   });
 }
-//
+
 main()
   .then(async () => {
     await prisma.$disconnect();

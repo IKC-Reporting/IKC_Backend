@@ -21,7 +21,6 @@ type Mutation {
   disableUser(siteAdminId: ID!, userId: ID!): Boolean
   reactivateUser(siteAdminId: ID!, userId: ID!): Boolean
 
-  # TODO: Finish below mutations, may need to update inputs etc. as needed but commenting out to reduce generation time
   # # PartnerOrg mutations
   createPartnerOrg(siteAdminId: ID!, adminId: ID!, name: String!): ID
   createContributor(
@@ -104,7 +103,6 @@ type User {
   active: Boolean
 }
 
-# TODO: implement below types , should be roughly in this order but commenting out to avoid issues with prisma schema being different from graphql
 # in general refer to prisma but leave out some parts which may not be needed (ex include user id not user obj in contributor...)
 type Contributor {
   id: ID
