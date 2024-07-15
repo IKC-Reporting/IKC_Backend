@@ -2,6 +2,11 @@ import { randomUUID } from "crypto";
 import prisma from "../../libs/prisma.js";
 import { User } from "../generated/graphql";
 import { logger } from "../utils/Logger.js";
+import {
+  checkPassword,
+  genPasswordHash,
+  validateLoginVars,
+} from "../utils/auth.js";
 
 export default {
   Query: {
@@ -10,7 +15,8 @@ export default {
 
       logger.info(`querying user with id: ${id}`);
       try {
-        const user = await prisma.user.findUniqueOrThrow({
+        // pull out password to not share it
+        const { password, ...user } = await prisma.user.findUniqueOrThrow({
           where: { id, active: true },
         });
 
@@ -21,13 +27,26 @@ export default {
         return null;
       }
     },
+    login: async (parent, args, context, info) => {
+      const { email, password } = args;
+      try {
+        validateLoginVars(email, password);
+        const result = await checkPassword(password, email);
+        logger.info(result);
+        return result;
+      } catch (error) {
+        logger.error(`error with user query: ${error}`);
+        return null;
+      }
+    },
   },
   Mutation: {
     createUser: async (parent, args, context, info) => {
-      const { siteAdminId, firstName, lastName, isSiteAdmin } = args;
+      const { siteAdminId, firstName, lastName, email, password, isSiteAdmin } =
+        args;
 
       logger.info(
-        `creating user with: creatorId: ${siteAdminId}, firstName: ${firstName}, lastName: ${lastName}, isSiteAdmin: ${isSiteAdmin}`
+        `creating user with: creatorId: ${siteAdminId}, firstName: ${firstName}, lastName: ${lastName}, email: ${email}, isSiteAdmin: ${isSiteAdmin}`
       );
       try {
         // check if creator is active & has correct authority
@@ -35,31 +54,38 @@ export default {
           where: { id: siteAdminId, active: true },
         });
 
-        if (creator?.siteAdmin) {
-          // if they do then create a new active user with a unique id
-          const newUser = await prisma.user.create({
-            data: {
-              firstName,
-              lastName,
-              siteAdmin: isSiteAdmin,
-              id: randomUUID(),
-              active: true,
-            },
-          });
-
-          if (newUser) {
-            logger.info(
-              `new user: { firstName: ${newUser.firstName}, lastName: ${newUser.lastName}, siteAdmin: ${newUser.siteAdmin}, id: ${newUser.id} }`
-            );
-            return newUser.id;
-          } else {
-            throw new Error(
-              `new user returned null or undefined from prisma create`
-            );
-          }
-        } else {
+        if (!creator?.siteAdmin) {
           throw new Error(
             `failed to create user, creatorId: ${siteAdminId} not siteAdmin`
+          );
+        }
+
+        // for now this is hardcoded...
+        if (!validateLoginVars(email, password)) {
+          throw new Error(`invalid login email`);
+        }
+        const hashedPassword = await genPasswordHash(password);
+        // if they do then create a new active user with a unique id
+        const newUser = await prisma.user.create({
+          data: {
+            firstName,
+            lastName,
+            email,
+            password: hashedPassword,
+            siteAdmin: isSiteAdmin,
+            id: randomUUID(),
+            active: true,
+          },
+        });
+
+        if (newUser) {
+          logger.info(
+            `new user: { firstName: ${newUser.firstName}, lastName: ${newUser.lastName}, siteAdmin: ${newUser.siteAdmin}, id: ${newUser.id} }`
+          );
+          return newUser.id;
+        } else {
+          throw new Error(
+            `new user returned null or undefined from prisma create`
           );
         }
       } catch (error) {

@@ -1,6 +1,10 @@
 GraphQL mutation/query,postman request name,test details,expected result,actual result
 user (query),badUserQuery,query a non-existant user id (bad-id),returns null,
 user (query),goodUserQuery,put valid user id (88c150cc-1235-4523-9224-65caafa935eb),returns user information,
+login (query),badEmailLoginQuery,put invalid login email (badEmail),returns null,
+login (query),badPasswordLoginQuery,put valid login email(good.email@localhost.net) and invalid login password (badEmail),returns null,
+login (query),failedLoginLoginQuery,put valid login email (fakeUser.email@localhost.net) and incorrect but valid password (P@ssw0rd123),returns null,
+login (query),gooddLoginLoginQuery,put valid login email (fakeUser.email@localhost.net) and password (helloW0rldm&),returns null,
 createUser (mutation),invalidCreateUser,put non id (bad-id) for site admin,returns null,
 createUser (mutation),badCreateUser,put non admin id(88c150cc-1235-4523-9224-65caafa935eb) for site admin,returns null,
 createUser (mutation),goodCreateUser,put admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) for site admin,returns new user id,
@@ -31,3 +35,9 @@ removePartnerOrgAdmin (mutation),badOrgAdminRemovePartnerOrgAdmin,remove partner
 removePartnerOrgAdmin (mutation),badNewAdminRemovePartnerOrgAdmin,remove partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but invalid new admin id (bad-id), returns true
 removePartnerOrgAdmin (mutation),goodRemovePartnerOrgAdmin,remove partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
 removePartnerOrgAdmin (mutation),goodSiteAdminRemovePartnerOrgAdmin,remove partner org admin with valid org admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+researchProject (query),invalidResearchProject,query non-existant research project (bad-id), returns null
+researchProject (query),badResearchProject,query existant research project (88a21a78-ef83-4091-baec-835f61391fb3), returns project info
+createResearchProject (mutation),badAdminCreateResearchProject,create a research project with an invalid site admin id (88c150cc-1235-4523-9224-65caafa935eb), returns null
+createResearchProject (mutation),invalidAdminCreateResearchProject,create a research project with an invalid site admin id (bad-id), returns null
+createResearchProject (mutation),invalidUserCreateResearchProject,create a research project with an valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and invalid admin id (bad id), returns null
+createResearchProject (mutation),goodCreateResearchProject,create a research project with an valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid admin id (88c150cc-1235-4523-9224-65caafa935eb), returns id

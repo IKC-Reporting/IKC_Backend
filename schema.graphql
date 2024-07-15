@@ -2,6 +2,7 @@ scalar DateTime
 
 type Query {
   user(id: ID!): User
+  login(email: String!, password: String!): ID
   contributor(id: ID!): Contributor
   partnerOrg(id: ID!): PartnerOrg
   contribution(id: ID!): Contribution
@@ -15,8 +16,11 @@ type Mutation {
     siteAdminId: ID!
     firstName: String!
     lastName: String!
+    email: String!
+    password: String!
     isSiteAdmin: Boolean!
   ): ID
+
   updateUser(userId: ID!, firstName: String, lastName: String): Boolean
   disableUser(siteAdminId: ID!, userId: ID!): Boolean
   reactivateUser(siteAdminId: ID!, userId: ID!): Boolean
@@ -99,6 +103,7 @@ type User {
   id: ID!
   firstName: String!
   lastName: String!
+  email: String!
   siteAdmin: Boolean!
   active: Boolean
 }

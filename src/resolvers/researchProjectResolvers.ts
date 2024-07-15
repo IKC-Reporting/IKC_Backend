@@ -75,12 +75,20 @@ export default {
       logger.info(`Creating research project with title: ${projectTitle}`);
 
       try {
+        const siteAdmin = await prisma.user.findUniqueOrThrow({
+          where: { id: siteAdminId },
+        });
+
+        if (siteAdmin.siteAdmin === false) {
+          throw new Error(`site admin invalid credentials`);
+        }
+
         const newResearchProject = await prisma.researchProject.create({
           data: {
             id: randomUUID(),
             projectTitle,
-            startDate,
-            endDate,
+            startDate: new Date(startDate),
+            endDate: new Date(endDate),
             admins: { connect: { id: adminId } },
           },
         });
@@ -99,7 +107,20 @@ export default {
       );
 
       try {
-        const updatedResearchProject = await prisma.researchProject.update({
+        const admin = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+        });
+
+        const researchProject = await prisma.researchProject.findUniqueOrThrow({
+          where: { id: researchProjectId },
+          include: { admins: true },
+        });
+
+        if (!researchProject.admins.some((admin) => admin.id === userId)) {
+          throw new Error(`invalid access, user not admin of project`);
+        }
+
+        await prisma.researchProject.update({
           where: { id: researchProjectId },
           data: {
             projectPartners: {
@@ -108,6 +129,19 @@ export default {
           },
         });
 
+        const updatedResearchProject =
+          await prisma.researchProject.findUniqueOrThrow({
+            where: { id: researchProjectId },
+            include: { projectPartners: true },
+          });
+
+        if (
+          !updatedResearchProject.projectPartners.some(
+            (partner) => partner.id === partnerOrgId
+          )
+        ) {
+          throw new Error(`partner not added to db, update error`);
+        }
         return true;
       } catch (error) {
         logger.error(
