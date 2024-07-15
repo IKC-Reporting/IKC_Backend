@@ -46,6 +46,7 @@ export default {
             },
           },
         });
+
         const projectAdmins = getAdminIds(researchProject.admins);
 
         const projectPartners = getProjectPartners(
@@ -113,18 +114,25 @@ export default {
 
         const researchProject = await prisma.researchProject.findUniqueOrThrow({
           where: { id: researchProjectId },
-          include: { admins: true },
+          include: { admins: true, projectPartners: true },
         });
 
-        if (!researchProject.admins.some((admin) => admin.id === userId)) {
+        if (
+          !researchProject.admins.some((admin) => admin.id === userId) &&
+          !admin.siteAdmin
+        ) {
           throw new Error(`invalid access, user not admin of project`);
         }
+
+        const partnerOrg = await prisma.partnerOrg.findUniqueOrThrow({
+          where: { id: partnerOrgId },
+        });
 
         await prisma.researchProject.update({
           where: { id: researchProjectId },
           data: {
             projectPartners: {
-              connect: { id: partnerOrgId },
+              connect: partnerOrg,
             },
           },
         });
@@ -150,46 +158,53 @@ export default {
         return false;
       }
     },
-    removePartnerOrg: async (parent, args, context, info) => {
-      const { userId, researchProjectId, partnerOrgId } = args;
+    addResearchProjectAdmin: async (parent, args, context, info) => {
+      const { userId, newAdminId, researchProjectId } = args;
 
       logger.info(
-        `Removing partner organization ${partnerOrgId} from research project ${researchProjectId}`
+        `Adding new admin ${newAdminId} to research project ${userId}`
       );
 
       try {
-        const updatedResearchProject = await prisma.researchProject.update({
+        const user = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+        });
+
+        const researchProject = await prisma.researchProject.findUniqueOrThrow({
+          where: { id: researchProjectId },
+          include: { admins: true, projectPartners: true },
+        });
+
+        if (
+          !researchProject.admins.some((admin) => admin.id === userId) &&
+          !user.siteAdmin
+        ) {
+          throw new Error(`invalid access, user not admin of project`);
+        }
+        const newAdmin = await prisma.user.findUniqueOrThrow({
+          where: { id: newAdminId },
+        });
+
+        await prisma.researchProject.update({
           where: { id: researchProjectId },
           data: {
-            projectPartners: {
-              disconnect: { id: partnerOrgId },
-            },
-          },
-        });
-
-        return true;
-      } catch (error) {
-        logger.error(
-          `Error removing partner organization from research project: ${error}`
-        );
-        return false;
-      }
-    },
-    addResearchProjectAdmin: async (parent, args, context, info) => {
-      const { userId, newAdmin } = args;
-
-      logger.info(`Adding new admin ${newAdmin} to research project ${userId}`);
-
-      try {
-        const updatedResearchProject = await prisma.researchProject.update({
-          where: { id: userId },
-          data: {
             admins: {
-              connect: { id: newAdmin },
+              connect: newAdmin,
             },
           },
         });
 
+        const updatedResearchProject =
+          await prisma.researchProject.findUniqueOrThrow({
+            where: { id: researchProjectId },
+            include: { admins: true },
+          });
+
+        if (
+          updatedResearchProject.admins.some((admin) => admin.id === newAdminId)
+        ) {
+          throw new Error(`admin not added to db, update error`);
+        }
         return true;
       } catch (error) {
         logger.error(`Error adding new admin to research project: ${error}`);
@@ -197,23 +212,58 @@ export default {
       }
     },
     removeResearchProjectAdmin: async (parent, args, context, info) => {
-      const { userId, adminId } = args;
+      const { userId, removedAdminId, researchProjectId } = args;
 
-      logger.info(`Removing admin ${adminId} from research project ${userId}`);
+      logger.info(
+        `Removing admin ${removedAdminId} from research project ${userId}`
+      );
 
       try {
-        const updatedResearchProject = await prisma.researchProject.update({
+        const user = await prisma.user.findUniqueOrThrow({
           where: { id: userId },
+        });
+
+        const researchProject = await prisma.researchProject.findUniqueOrThrow({
+          where: { id: researchProjectId },
+          include: { admins: true, projectPartners: true },
+        });
+
+        if (
+          !researchProject.admins.some((admin) => admin.id === userId) &&
+          !user.siteAdmin
+        ) {
+          throw new Error(`invalid access, user not admin of project`);
+        }
+
+        const removedAdmin = await prisma.user.findUniqueOrThrow({
+          where: { id: removedAdminId },
+        });
+
+        await prisma.researchProject.update({
+          where: { id: researchProjectId },
           data: {
             admins: {
-              disconnect: { id: adminId },
+              disconnect: removedAdmin,
             },
           },
         });
 
+        const updatedResearchProject =
+          await prisma.researchProject.findUniqueOrThrow({
+            where: { id: researchProjectId },
+            include: { admins: true },
+          });
+
+        if (
+          updatedResearchProject.admins.some(
+            (admin) => admin.id === removedAdminId
+          )
+        ) {
+          throw new Error(`admin not removed from db, update error`);
+        }
         return true;
       } catch (error) {
-        logger.error(`Error removing admin from research project: ${error}`);
+        logger.error(`Error adding new admin to research project: ${error}`);
         return false;
       }
     },

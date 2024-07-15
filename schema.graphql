@@ -90,13 +90,16 @@ type Mutation {
     endDate: DateTime!
   ): ID
   addPartnerOrg(userId: ID!, researchProjectId: ID!, partnerOrgId: ID!): Boolean
-  removePartnerOrg(
+  addResearchProjectAdmin(
     userId: ID!
+    newAdminId: ID!
     researchProjectId: ID!
-    partnerOrgId: ID!
   ): Boolean
-  addResearchProjectAdmin(userId: ID!, newAdmin: ID!): Boolean
-  removeResearchProjectAdmin(userId: ID!, adminId: ID!): Boolean
+  removeResearchProjectAdmin(
+    userId: ID!
+    removedAdminId: ID!
+    researchProjectId: ID!
+  ): Boolean
 }
 
 type User {

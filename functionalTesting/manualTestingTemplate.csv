@@ -1,20 +1,22 @@
-GraphQL mutation/query,postman request name,test details,expected result,actual result
-user (query),badUserQuery,query a non-existant user id (bad-id),returns null,
-user (query),goodUserQuery,put valid user id (88c150cc-1235-4523-9224-65caafa935eb),returns user information,
-login (query),badEmailLoginQuery,put invalid login email (badEmail),returns null,
-login (query),badPasswordLoginQuery,put valid login email(good.email@localhost.net) and invalid login password (badEmail),returns null,
-login (query),failedLoginLoginQuery,put valid login email (fakeUser.email@localhost.net) and incorrect but valid password (P@ssw0rd123),returns null,
-login (query),gooddLoginLoginQuery,put valid login email (fakeUser.email@localhost.net) and password (helloW0rldm&),returns null,
-createUser (mutation),invalidCreateUser,put non id (bad-id) for site admin,returns null,
-createUser (mutation),badCreateUser,put non admin id(88c150cc-1235-4523-9224-65caafa935eb) for site admin,returns null,
-createUser (mutation),goodCreateUser,put admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) for site admin,returns new user id,
+GraphQL mutation/query,postman request name,test details,expected result
+user (query),badUserQuery,query a non-existant user id (bad-id),returns null
+user (query),goodUserQuery,put valid user id (88c150cc-1235-4523-9224-65caafa935eb),returns user information
+login (query),badEmailLoginQuery,put invalid login email (badEmail),returns null
+login (query),badPasswordLoginQuery,put valid login email(good.email@localhost.net) and invalid login password (badEmail),returns null
+login (query),failedLoginLoginQuery,put valid login email (fakeUser.email@localhost.net) and incorrect but valid password (P@ssw0rd123),returns null
+login (query),gooddLoginLoginQuery,put valid login email (fakeUser.email@localhost.net) and password (helloW0rldm&),returns null
+createUser (mutation),invalidCreateUser,put non id (bad-id) for site admin,returns null
+createUser (mutation),badAdminCreateUser,put non admin id(88c150cc-1235-4523-9224-65caafa935eb) for site admin,returns null
+createUser (mutation),badEmailCreateUser,put admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) for site admin and bad email (notAnEmail),returns new user id
+createUser (mutation),badPassCreateUser,put admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) for site admin and bad password (password),returns new user id
+createUser (mutation),goodCreateUser,put admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) for site admin iwth good emial/password (fake.email@localhost.net/P@ssw0rd!),returns new user id
 deactivateUser (mutation),badAdminDeactivateUser,put bad admin id (88c150cc-1235-4523-9224-65caafa935eb),returns false
 deactivateUser (mutation),invalidAdminDeactivateUser,put invalid admin id (bad-id),returns false
 deactivateUser (mutation),invalidUserDeactivateUser,put valid site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and invalid user (bad id),returns false
 deactivateUser (mutation),goodDeactivateUser,put valid site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and user (88c150cc-1235-4523-9224-65caafa935eb) id,returns true
-updateUser (mutation),invalidUpdateUser,give non id (bad-id),returns null,
-updateUser (mutation),badUpdateUser,give deactivated id(),returns false,
-updateUser (mutation),goodUpdateUser,give valid user id (88c150cc-1235-4523-9224-65caafa935eb),returns true,
+updateUser (mutation),invalidUpdateUser,give non id (bad-id),returns null
+updateUser (mutation),badUpdateUser,give deactivated id(),returns false
+updateUser (mutation),goodUpdateUser,give valid user id (88c150cc-1235-4523-9224-65caafa935eb),returns true
 reactivateUser (mutation),invalidAdminReactivateUser,give invalid site admin id (bad-id),returns false
 reactivateUser (mutation),badAdminReactivateUser,give non site admin id (bad-id) for site admin,returns false
 reactivateUser (mutation),invalidUserReactivateUser,give good site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and invalid user id (bad-id),returns false
@@ -36,8 +38,22 @@ removePartnerOrgAdmin (mutation),badNewAdminRemovePartnerOrgAdmin,remove partner
 removePartnerOrgAdmin (mutation),goodRemovePartnerOrgAdmin,remove partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
 removePartnerOrgAdmin (mutation),goodSiteAdminRemovePartnerOrgAdmin,remove partner org admin with valid org admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
 researchProject (query),invalidResearchProject,query non-existant research project (bad-id), returns null
-researchProject (query),badResearchProject,query existant research project (88a21a78-ef83-4091-baec-835f61391fb3), returns project info
+researchProject (query),goodResearchProject,query existant research project (88a21a78-ef83-4091-baec-835f61391fb3), returns project info
 createResearchProject (mutation),badAdminCreateResearchProject,create a research project with an invalid site admin id (88c150cc-1235-4523-9224-65caafa935eb), returns null
 createResearchProject (mutation),invalidAdminCreateResearchProject,create a research project with an invalid site admin id (bad-id), returns null
 createResearchProject (mutation),invalidUserCreateResearchProject,create a research project with an valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and invalid admin id (bad id), returns null
 createResearchProject (mutation),goodCreateResearchProject,create a research project with an valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid admin id (88c150cc-1235-4523-9224-65caafa935eb), returns id
+addPartnerOrg (mutation),invalidUserAddPartnerOrg,add a partner to an project without a valid id (bad id), returns false
+addPartnerOrg (mutation),invalidAdminAddPartnerOrg,add a partner to an project without a valid admin or site admin id (88c150cc-1235-4523-9224-65caafa935eb) for the project (88a21a78-ef83-4091-baec-835f61391fb3), returns false
+addPartnerOrg (mutation),invalidPartnerOrgAddPartnerOrg,add a partner to an project with a valid admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) project id (88a21a78-ef83-4091-baec-835f61391fb3) and invalid partnerOrg id (bad id), returns false
+addPartnerOrg (mutation),goodAddPartnerOrg,add a partner to an project with a valid admin/site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) project id (88a21a78-ef83-4091-baec-835f61391fb3) and valid partnerOrg id (4455c019-a941-4ad3-806f-ebb0cf1a2ffb), returns true
+addResearchProjectAdmin (mutation),invalidAdminAddResearchProjectAdmin,add research project admin with all invalid ids (bad-id), returns false
+addResearchProjectAdmin (mutation),badAdminAddResearchProjectAdmin,add research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and new admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and unconnected project id (4455c019-a941-4ad3-806f-ebb0cf1a2ffb), returns false
+addResearchProjectAdmin (mutation),badNewAdminAddResearchProjectAdmin,add research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) but invalid new admin id (bad-id), returns false
+addResearchProjectAdmin (mutation),goodAddResearchProjectAdmin,add research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) and valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+addResearchProjectAdmin (mutation),goodSiteAdminAddResearchProjectAdmin,add research project admin with valid site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) and valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+removeResearchProjectAdmin (mutation),invalidRemoveAdminRemoveResearchProjectAdmin,remove research project admin with all invalid ids (bad-id), returns false
+removeResearchProjectAdmin (mutation),badUserAdminRemoveResearchProjectAdmin,remove research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and remove admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and unconnected project id (4455c019-a941-4ad3-806f-ebb0cf1a2ffb), returns false
+removeResearchProjectAdmin (mutation),badRemoveAdminRemoveResearchProjectAdmin,remove research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) but invalid remove admin id (bad-id), returns true
+removeResearchProjectAdmin (mutation),goodRemoveResearchProjectAdmin,remove research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+removeResearchProjectAdmin (mutation),goodSiteAdminRemoveResearchProjectAdmin,remove research project admin with valid project admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true

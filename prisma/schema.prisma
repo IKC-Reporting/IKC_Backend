@@ -38,9 +38,8 @@ model Contributor {
 }
 
 model PartnerOrg {
-  id                String           @id
-  ResearchProject   ResearchProject? @relation(fields: [researchProjectId], references: [id])
-  researchProjectId String?
+  id               String            @id
+  ResearchProjects ResearchProject[]
 
   name         String
   admins       User[]

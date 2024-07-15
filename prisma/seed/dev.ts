@@ -71,7 +71,7 @@ async function main() {
   });
 
   await prisma.researchProject.upsert({
-    where: { id: "88a21a78-ef83-4091-baec-835f61391fb3" },
+    where: { id: "4455c019-a941-4ad3-806f-ebb0cf1a2ffb" },
     update: {},
     create: {
       id: "4455c019-a941-4ad3-806f-ebb0cf1a2ffb",

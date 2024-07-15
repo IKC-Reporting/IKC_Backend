@@ -8,7 +8,7 @@
 
 - [x] user
 - [x] partnerOrg
-- [ ] research project
+- [x] research project
 - [ ] contributor
 - [ ] contribution
 - [ ] ikc report
