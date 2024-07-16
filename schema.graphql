@@ -34,7 +34,7 @@ type Mutation {
     researchProjectId: ID!
     hourlyRate: Float!
     benRatePer: Float!
-  ): ID!
+  ): ID
   addPartnerOrgAdmin(orgAdminId: ID!, orgId: ID!, newAdminId: ID!): Boolean
   removePartnerOrgAdmin(
     orgAdminId: ID!

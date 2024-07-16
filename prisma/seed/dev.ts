@@ -36,6 +36,21 @@ async function main() {
     },
   });
 
+  // add contributor user (password=P@ssw0rd123!)
+  await prisma.user.upsert({
+    where: { id: "24a7cf8c-feca-4863-87e8-1952a18a6973" },
+    update: {},
+    create: {
+      id: "24a7cf8c-feca-4863-87e8-1952a18a6973",
+      firstName: "contributor user",
+      lastName: "lastname",
+      email: "contributions.research@localhost.net",
+      password: "$2b$10$.R.hlIYt0b6ZGq7D/3sUAOMDA97hpUHLVgU1585cnA67z3SuiGuzS",
+      siteAdmin: false,
+      active: true,
+    },
+  });
+
   console.log("adding partner org");
   await prisma.partnerOrg.upsert({
     where: { id: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576" },
@@ -67,6 +82,9 @@ async function main() {
       startDate: new Date(),
       endDate: new Date(Date.now() + 100000),
       admins: { connect: { id: "88c150cc-1235-4523-9224-65caafa935eb" } },
+      projectPartners: {
+        connect: { id: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576" },
+      },
     },
   });
 
@@ -79,6 +97,29 @@ async function main() {
       startDate: new Date("1884/01/01"),
       endDate: new Date("3077/12/24"),
       admins: { connect: { id: "402a8052-9c4d-496e-bd17-d25f3d0c2bf7" } },
+    },
+  });
+
+  console.log("creating contributor");
+
+  // fee9a62e-b403-4162-8e43-deb6b879ac9e
+  // userId: "24a7cf8c-feca-4863-87e8-1952a18a6973"
+  // partnerOrgAdminId: "88c150cc-1235-4523-9224-65caafa935eb"
+  // partnerOrgId: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576"
+  // researchProjectId: "88a21a78-ef83-4091-baec-835f61391fb3"
+  // hourlyRate: 20
+  // benRatePer: 0.2
+
+  await prisma.contributor.upsert({
+    where: { id: "fee9a62e-b403-4162-8e43-deb6b879ac9e" },
+    update: {},
+    create: {
+      id: "fee9a62e-b403-4162-8e43-deb6b879ac9",
+      userId: "24a7cf8c-feca-4863-87e8-1952a18a6973",
+      partnerOrgId: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576",
+      researchProjectId: "88a21a78-ef83-4091-baec-835f61391fb3",
+      hourlyRate: 20,
+      benRatePer: 0.2,
     },
   });
 }

@@ -9,6 +9,6 @@
 - [x] user
 - [x] partnerOrg
 - [x] research project
-- [ ] contributor
+- [x] contributor
 - [ ] contribution
 - [ ] ikc report

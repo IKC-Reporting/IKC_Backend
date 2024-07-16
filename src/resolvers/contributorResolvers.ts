@@ -57,7 +57,7 @@ export default {
         });
 
         if (
-          admin?.id !== partnerOrgAdminId ||
+          !admin?.siteAdmin &&
           !admin?.PartnerOrgAdminAssignments.some(
             (item) => item.id === partnerOrg.id
           )
@@ -67,23 +67,46 @@ export default {
           );
         }
 
+        const researchProject = await prisma.researchProject.findUniqueOrThrow({
+          where: { id: researchProjectId },
+          include: { projectPartners: true },
+        });
+
+        if (
+          !researchProject.projectPartners.some(
+            (partner) => partner.id === partnerOrgId
+          )
+        ) {
+          throw new Error(
+            `partner org unconnected to research project, invalid permissions`
+          );
+        }
+
+        if (hourlyRate <= 0 || hourlyRate > 100) {
+          throw new Error(`incorrect hourlyRate value (over 100)`);
+        } else if (1 < benRatePer || benRatePer < 0) {
+          throw new Error(
+            `incorrect benRatePer value (not decimal between 0 & 1)`
+          );
+        }
+        const user = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+        });
+        const researchProj_withoutOrg =
+          await prisma.researchProject.findUniqueOrThrow({
+            where: { id: researchProjectId },
+          });
         const contributor = await prisma.contributor.create({
           data: {
             id: randomUUID(),
 
-            userId,
-            partnerOrgId,
-            researchProjectId,
+            User: { connect: user },
+            PartnerOrg: { connect: partnerOrg },
+            ResearchProject: {
+              connect: researchProj_withoutOrg,
+            },
             hourlyRate,
             benRatePer,
-            contributions: null,
-          },
-        });
-
-        const user = await prisma.user.update({
-          where: { id: userId },
-          data: {
-            contributorAssignments: { connect: { id: contributor.id } },
           },
         });
 

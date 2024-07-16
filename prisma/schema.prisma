@@ -28,7 +28,7 @@ model Contributor {
   partnerOrgId      String
   PartnerOrg        PartnerOrg      @relation(fields: [partnerOrgId], references: [id])
   researchProjectId String
-  ResearchOrg       ResearchProject @relation(fields: [researchProjectId], references: [id])
+  ResearchProject   ResearchProject @relation(fields: [researchProjectId], references: [id])
 
   hourlyRate    Float
   benRatePer    Float

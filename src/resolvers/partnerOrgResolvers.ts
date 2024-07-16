@@ -137,19 +137,23 @@ export default {
           );
         }
 
-        const partnerOrgAdmins = await prisma.partnerOrg.findUniqueOrThrow({
+        const partnerOrg = await prisma.partnerOrg.findUniqueOrThrow({
           where: { id: orgId },
           include: { admins: true },
         });
 
-        const newAdminList = partnerOrgAdmins.admins.filter(
-          (admin) => admin.id != removedAdminId
-        );
+        if (partnerOrg.admins.length <= 1) {
+          throw new Error(`only one or less admins, unable to remove`);
+        }
+
+        const removeAdmin = await prisma.user.findUniqueOrThrow({
+          where: { id: removedAdminId },
+        });
 
         await prisma.partnerOrg.update({
           where: { id: orgId },
           data: {
-            admins: { set: newAdminList },
+            admins: { disconnect: removeAdmin },
           },
         });
 
