@@ -35,6 +35,7 @@ model Contributor {
   contributions ContribItem[]
 
   @@unique([userId, partnerOrgId])
+  @@unique([userId, researchProjectId])
 }
 
 model PartnerOrg {

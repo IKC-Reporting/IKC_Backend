@@ -32,7 +32,6 @@ export default {
       try {
         validateLoginVars(email, password);
         const result = await checkPassword(password, email);
-        logger.info(result);
         return result;
       } catch (error) {
         logger.error(`error with user query: ${error}`);

@@ -10,5 +10,5 @@
 - [x] partnerOrg
 - [x] research project
 - [x] contributor
-- [ ] contribution
+- [x] contribution
 - [ ] ikc report

@@ -47,7 +47,7 @@ type Mutation {
     contributorId: ID!
 
     date: DateTime!
-    details: String
+    details: String!
 
     hours: Float!
   ): ID
@@ -55,7 +55,7 @@ type Mutation {
     contributorId: ID!
 
     date: DateTime!
-    details: String
+    details: String!
 
     itemName: String!
     value: Float!
@@ -145,8 +145,9 @@ type OtherContribution {
 
 type Contribution {
   id: ID!
+  contributorId: ID!
   date: DateTime!
-  details: String
+  details: String!
 
   hourContribution: HourContribution
   otherContribution: OtherContribution
