@@ -1,0 +1,87 @@
+GraphQL mutation/query,postman request name,test details,expected result
+user (query),badUserQuery,query a non-existant user id (bad-id),returns null
+user (query),goodUserQuery,put valid user id (88c150cc-1235-4523-9224-65caafa935eb),returns user information
+login (query),badEmailLoginQuery,put invalid login email (badEmail),returns null
+login (query),badPasswordLoginQuery,put valid login email(good.email@localhost.net) and invalid login password (badEmail),returns null
+login (query),failedLoginLoginQuery,put valid login email (fakeUser.email@localhost.net) and incorrect but valid password (P@ssw0rd123),returns null
+login (query),gooddLoginLoginQuery,put valid login email (fakeUser.email@localhost.net) and password (helloW0rldm&),returns null
+createUser (mutation),invalidCreateUser,put non id (bad-id) for site admin,returns null
+createUser (mutation),badAdminCreateUser,put non admin id(88c150cc-1235-4523-9224-65caafa935eb) for site admin,returns null
+createUser (mutation),badEmailCreateUser,put admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) for site admin and bad email (notAnEmail),returns new user id
+createUser (mutation),badPassCreateUser,put admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) for site admin and bad password (password),returns new user id
+createUser (mutation),goodCreateUser,put admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) for site admin iwth good emial/password (fake.email@localhost.net/P@ssw0rd!),returns new user id
+deactivateUser (mutation),badAdminDeactivateUser,put bad admin id (88c150cc-1235-4523-9224-65caafa935eb),returns false
+deactivateUser (mutation),invalidAdminDeactivateUser,put invalid admin id (bad-id),returns false
+deactivateUser (mutation),invalidUserDeactivateUser,put valid site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and invalid user (bad id),returns false
+deactivateUser (mutation),goodDeactivateUser,put valid site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and user (88c150cc-1235-4523-9224-65caafa935eb) id,returns true
+updateUser (mutation),invalidUpdateUser,give non id (bad-id),returns null
+updateUser (mutation),badUpdateUser,give deactivated id(),returns false
+updateUser (mutation),goodUpdateUser,give valid user id (88c150cc-1235-4523-9224-65caafa935eb),returns true
+reactivateUser (mutation),invalidAdminReactivateUser,give invalid site admin id (bad-id),returns false
+reactivateUser (mutation),badAdminReactivateUser,give non site admin id (bad-id) for site admin,returns false
+reactivateUser (mutation),invalidUserReactivateUser,give good site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and invalid user id (bad-id),returns false
+reactivateUser (mutation),goodReactivateUser,give good site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and deactivated user id (88c150cc-1235-4523-9224-65caafa935eb),returns true
+partnerOrg (query),invalidPartnerOrg,query non-existant partner org (bad-id), returns null
+partnerOrg (query),goodPartnerOrg,query existant partner org (3ab3107d-09bc-44cd-b73b-0dfd17bd7576), returns organization info
+createPartnerOrg (mutation),badAdminCreatePartnerOrg,create a partner org with an invalid site admin id (88c150cc-1235-4523-9224-65caafa935eb), returns null
+createPartnerOrg (mutation),invalidAdminCreatePartnerOrg,create a partner org with an invalid site admin id (bad-id), returns null
+createPartnerOrg (mutation),invalidUserCreatePartnerOrg,create a partner org with an valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and invalid admin id (bad id), returns null
+createPartnerOrg (mutation),goodCreatePartnerOrg,create a partner org with an valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid admin id (88c150cc-1235-4523-9224-65caafa935eb), returns id
+addPartnerOrgAdmin (mutation),invalidOrgAdminAddPartnerOrgAdmin,add partner org admin with all invalid ids (bad-id), returns false
+addPartnerOrgAdmin (mutation),badOrgAdminAddPartnerOrgAdmin,add partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and new admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and unconnected org id (f27e212e-76c2-4977-8fd5-9b5367a31b68), returns false
+addPartnerOrgAdmin (mutation),badNewAdminAddPartnerOrgAdmin,add partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but invalid new admin id (bad-id), returns false
+addPartnerOrgAdmin (mutation),goodAddPartnerOrgAdmin,add partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+addPartnerOrgAdmin (mutation),goodSiteAdminAddPartnerOrgAdmin,add partner org admin with valid site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+removePartnerOrgAdmin (mutation),invalidOrgAdminRemovePartnerOrgAdmin,remove partner org admin with all invalid ids (bad-id), returns false
+removePartnerOrgAdmin (mutation),badOrgAdminRemovePartnerOrgAdmin,remove partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and new admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and unconnected org id (f27e212e-76c2-4977-8fd5-9b5367a31b68), returns false
+removePartnerOrgAdmin (mutation),badNewAdminRemovePartnerOrgAdmin,remove partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but invalid new admin id (bad-id), returns false
+removePartnerOrgAdmin (mutation),badCountRemovePartnerOrgAdmin,remove partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) but with only one or less current admins, returns false
+removePartnerOrgAdmin (mutation),goodRemovePartnerOrgAdmin,remove partner org admin with valid org admin (88c150cc-1235-4523-9224-65caafa935eb) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+removePartnerOrgAdmin (mutation),goodSiteAdminRemovePartnerOrgAdmin,remove partner org admin with valid org admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+researchProject (query),invalidResearchProject,query non-existant research project (bad-id), returns null
+researchProject (query),goodResearchProject,query existant research project (88a21a78-ef83-4091-baec-835f61391fb3), returns project info
+createResearchProject (mutation),badAdminCreateResearchProject,create a research project with an invalid site admin id (88c150cc-1235-4523-9224-65caafa935eb), returns null
+createResearchProject (mutation),invalidAdminCreateResearchProject,create a research project with an invalid site admin id (bad-id), returns null
+createResearchProject (mutation),invalidUserCreateResearchProject,create a research project with an valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and invalid admin id (bad id), returns null
+createResearchProject (mutation),goodCreateResearchProject,create a research project with an valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid admin id (88c150cc-1235-4523-9224-65caafa935eb), returns id
+addPartnerOrg (mutation),invalidUserAddPartnerOrg,add a partner to an project without a valid id (bad id), returns false
+addPartnerOrg (mutation),invalidAdminAddPartnerOrg,add a partner to an project without a valid admin or site admin id (88c150cc-1235-4523-9224-65caafa935eb) for the project (88a21a78-ef83-4091-baec-835f61391fb3), returns false
+addPartnerOrg (mutation),invalidPartnerOrgAddPartnerOrg,add a partner to an project with a valid admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) project id (88a21a78-ef83-4091-baec-835f61391fb3) and invalid partnerOrg id (bad id), returns false
+addPartnerOrg (mutation),goodAddPartnerOrg,add a partner to an project with a valid admin/site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) project id (88a21a78-ef83-4091-baec-835f61391fb3) and valid partnerOrg id (4455c019-a941-4ad3-806f-ebb0cf1a2ffb), returns true
+addResearchProjectAdmin (mutation),invalidAdminAddResearchProjectAdmin,add research project admin with all invalid ids (bad-id), returns false
+addResearchProjectAdmin (mutation),badAdminAddResearchProjectAdmin,add research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and new admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and unconnected project id (4455c019-a941-4ad3-806f-ebb0cf1a2ffb), returns false
+addResearchProjectAdmin (mutation),badNewAdminAddResearchProjectAdmin,add research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) but invalid new admin id (bad-id), returns false
+addResearchProjectAdmin (mutation),goodAddResearchProjectAdmin,add research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) and valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+addResearchProjectAdmin (mutation),goodSiteAdminAddResearchProjectAdmin,add research project admin with valid site admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) and valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+removeResearchProjectAdmin (mutation),invalidRemoveAdminRemoveResearchProjectAdmin,remove research project admin with all invalid ids (bad-id), returns false
+removeResearchProjectAdmin (mutation),badUserAdminRemoveResearchProjectAdmin,remove research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and remove admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and unconnected project id (4455c019-a941-4ad3-806f-ebb0cf1a2ffb), returns false
+removeResearchProjectAdmin (mutation),badRemoveAdminRemoveResearchProjectAdmin,remove research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) but invalid remove admin id (bad-id), returns true
+removeResearchProjectAdmin (mutation),goodRemoveResearchProjectAdmin,remove research project admin with valid project admin (88c150cc-1235-4523-9224-65caafa935eb) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+removeResearchProjectAdmin (mutation),goodSiteAdminRemoveResearchProjectAdmin,remove research project admin with valid project admin (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and valid project id (88a21a78-ef83-4091-baec-835f61391fb3) but valid new admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7), returns true
+createContributor (mutation),invalidUserCreateContributor,create a contributor with a bad user id (bad id),returns null
+createContributor (mutation),invalidPartnerOrgCreateContributor,create a contributor with a good user id (24a7cf8c-feca-4863-87e8-1952a18a6973) and invalid partner org id (bad id), return null
+createContributor (mutation),badPartnerOrgAdminCreateContributor,create a contributor with a good user id (24a7cf8c-feca-4863-87e8-1952a18a6973) and partner org id (f27e212e-76c2-4977-8fd5-9b5367a31b68) but unconnected admin (88c150cc-1235-4523-9224-65caafa935eb), return null
+createContributor (mutation),invalidResearchProjectCreateContributor,create a contributor with a good user id (24a7cf8c-feca-4863-87e8-1952a18a6973) and partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) and admin (88c150cc-1235-4523-9224-65caafa935eb) but invalid research project (bad id), return null
+createContributor (mutation),badResearchProjectCreateContributor,create a contributor with a good user id (24a7cf8c-feca-4863-87e8-1952a18a6973) and partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) and admin (88c150cc-1235-4523-9224-65caafa935eb) but unconnected research project (4455c019-a941-4ad3-806f-ebb0cf1a2ffb), return null
+createContributor (mutation),badCreateContributor,create a contributor with a good user id (24a7cf8c-feca-4863-87e8-1952a18a6973) and partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) and admin (88c150cc-1235-4523-9224-65caafa935eb) and research project (88a21a78-ef83-4091-baec-835f61391fb3) but bad data (-1), return null
+createContributor (mutation),goodCreateContributor,create a contributor with a good user id (24a7cf8c-feca-4863-87e8-1952a18a6973) and partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) and admin (88c150cc-1235-4523-9224-65caafa935eb) and research project (88a21a78-ef83-4091-baec-835f61391fb3) and data (20 & .20), return ID
+createHourContribution (mutation),invalidContributorCreateHourContribution,create a hourly contribution with invalid contirbutor id (bad id),return null
+createHourContribution (mutation),invalidFutureDateCreateHourContribution,create a hourly contribution with valid contributor id (fee9a62e-b403-4162-8e43-deb6b879ac9) and invalid creation date (3000-01-01 after project ends),return null
+createHourContribution (mutation),invalidPastDateCreateHourContribution,create a hourly contribution with valid contributor id (fee9a62e-b403-4162-8e43-deb6b879ac9) and invalid creation date (1000-01-01 before project begins),return null
+createHourContribution (mutation),invalidHoursCreateHourContribution,create a hourly contribution with valid contributor id (fee9a62e-b403-4162-8e43-deb6b879ac9) and valid creation date (2024-01-01) but invalid hours (-1),return null
+createHourContribution (mutation),goodCreateHourContribution,create a hourly contribution with correct id (fee9a62e-b403-4162-8e43-deb6b879ac9) date (2024-02-02) and hours (5),return ID
+createOtherContribution (mutation),invalidContributorCreateOtherContribution,create an other contribution with invalid contirbutor id (bad id),return null
+createOtherContribution (mutation),invalidFutureDateCreateOtherContribution,create an other contribution with valid contributor id (fee9a62e-b403-4162-8e43-deb6b879ac9) and invalid creation date (4000-01-01 after project ends),return null
+createOtherContribution (mutation),invalidPastDateCreateOtherContribution,create an other contribution with valid contributor id (fee9a62e-b403-4162-8e43-deb6b879ac9) and invalid creation date (1000-01-01 before project begins),return null
+createOtherContribution (mutation),invalidValueCreateOtherContribution,create an other contribution with valid contributor id (fee9a62e-b403-4162-8e43-deb6b879ac9) and valid creation date (2024-01-01) but invalid values (-10),return null
+createOtherContribution (mutation),invalidItemsCreateOtherContribution,create an other contribution with valid contributor id (fee9a62e-b403-4162-8e43-deb6b879ac9) and valid creation date (2024-01-01) and values (1.99) but invalid number of items ('coca-cola' & 0),return null
+createOtherContribution (mutation),goodCreateOtherContribution,create an other contribution with correct id (fee9a62e-b403-4162-8e43-deb6b879ac9) date (2024-01-01) and items ('cola-cola' & 1) and values (1.99),return ID
+contributionQuery (mutation),invalidContributionQuery,query an invalid contribution id (bad id),return null
+contributionQuery (mutation),invalidContributionQuery,query an valid hour contribution id (1e137e1a-ca37-432a-bde1-7cf93946706a),return data for hourly contribution
+contributionQuery (mutation),invalidContributionQuery,query an valid other contribution id (8d5e869c-1988-45ba-a95c-44b1d30ac3c0),return data for other contribution
+
+removeContribution (mutation),invlalidUserRemoveContribution,remove a contribution with invalid user id (bad id), return false
+removeContribution (mutation),badUserRemoveContribution,remove a contribution with unconnected non admin user id (d38cbf18-ac04-4517-96d5-289c2b6222c0) and contribution id (1e137e1a-ca37-432a-bde1-7cf93946706a), return false
+removeContribution (mutation),goodUserRemoveContribution,remove a contribution with valid user id (24a7cf8c-feca-4863-87e8-1952a18a6973) and contribution id (1e137e1a-ca37-432a-bde1-7cf93946706a), return true
+removeContribution (mutation),goodOrgAdminRemoveContribution,remove a contribution with valid org admin id (88c150cc-1235-4523-9224-65caafa935eb) and contribution id (1e137e1a-ca37-432a-bde1-7cf93946706a), return true
+removeContribution (mutation),goodSiteAdminRemoveContribution,remove a contribution with valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and contribution id (1e137e1a-ca37-432a-bde1-7cf93946706a), return true

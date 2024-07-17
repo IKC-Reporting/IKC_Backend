@@ -10,6 +10,8 @@ model User {
 
   firstName String
   lastName  String
+  email     String  @unique
+  password  String
   siteAdmin Boolean
 
   contributorAssignments          Contributor[]
@@ -21,22 +23,24 @@ model User {
 model Contributor {
   id String @id
 
-  userId       String
-  User         User       @relation(fields: [userId], references: [id])
-  partnerOrgId String
-  PartnerOrg   PartnerOrg @relation(fields: [partnerOrgId], references: [id])
+  userId            String
+  User              User            @relation(fields: [userId], references: [id])
+  partnerOrgId      String
+  PartnerOrg        PartnerOrg      @relation(fields: [partnerOrgId], references: [id])
+  researchProjectId String
+  ResearchProject   ResearchProject @relation(fields: [researchProjectId], references: [id])
 
   hourlyRate    Float
   benRatePer    Float
   contributions ContribItem[]
 
   @@unique([userId, partnerOrgId])
+  @@unique([userId, researchProjectId])
 }
 
 model PartnerOrg {
-  id                String           @id
-  ResearchProject   ResearchProject? @relation(fields: [researchProjectId], references: [id])
-  researchProjectId String?
+  id               String            @id
+  ResearchProjects ResearchProject[]
 
   name         String
   admins       User[]
@@ -58,6 +62,7 @@ model OtherContribution {
 
   itemName String
   value    Float
+  items    Int
 }
 
 model ContribItem {
@@ -99,6 +104,7 @@ model ResearchProject {
   admins          User[]
   projectPartners PartnerOrg[]
   ikcReports      IKCReport[]
+  Contributor     Contributor[]
 }
 
 generator client {

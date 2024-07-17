@@ -2,6 +2,7 @@ scalar DateTime
 
 type Query {
   user(id: ID!): User
+  login(email: String!, password: String!): ID
   contributor(id: ID!): Contributor
   partnerOrg(id: ID!): PartnerOrg
   contribution(id: ID!): Contribution
@@ -15,31 +16,38 @@ type Mutation {
     siteAdminId: ID!
     firstName: String!
     lastName: String!
+    email: String!
+    password: String!
     isSiteAdmin: Boolean!
   ): ID
+
   updateUser(userId: ID!, firstName: String, lastName: String): Boolean
   disableUser(siteAdminId: ID!, userId: ID!): Boolean
   reactivateUser(siteAdminId: ID!, userId: ID!): Boolean
 
-  # TODO: Finish below mutations, may need to update inputs etc. as needed but commenting out to reduce generation time
   # # PartnerOrg mutations
   createPartnerOrg(siteAdminId: ID!, adminId: ID!, name: String!): ID
   createContributor(
     userId: ID!
     partnerOrgAdminId: ID!
     partnerOrgId: ID!
+    researchProjectId: ID!
     hourlyRate: Float!
     benRatePer: Float!
-  ): ID!
-  addPartnerOrgAdmin(userId: ID!, newAdminID: ID!): Boolean
-  removePartnerAdmin(userId: ID!, removedAdminID: ID!): Boolean
+  ): ID
+  addPartnerOrgAdmin(orgAdminId: ID!, orgId: ID!, newAdminId: ID!): Boolean
+  removePartnerOrgAdmin(
+    orgAdminId: ID!
+    orgId: ID!
+    removedAdminId: ID!
+  ): Boolean
 
   # # contribution item mutations (create is for each subitem as you cannot have two for one contribution)
   createHourContribution(
     contributorId: ID!
 
     date: DateTime!
-    details: String
+    details: String!
 
     hours: Float!
   ): ID
@@ -47,10 +55,11 @@ type Mutation {
     contributorId: ID!
 
     date: DateTime!
-    details: String
+    details: String!
 
     itemName: String!
     value: Float!
+    items: Int!
   ): ID
   removeContribution(userId: ID!, contributionId: ID!): Boolean
 
@@ -65,12 +74,12 @@ type Mutation {
   ): ID
   submitIKCReport(
     userId: ID!
-    ikcReportID: ID!
+    ikcReportId: ID!
     submitterId: ID!
     submissionDate: DateTime!
   ): ID
-  approveIKCReport(userId: ID!, ikcReportID: ID!): Boolean
-  denyIKCReport(userId: ID!, ikcReportID: ID!): Boolean
+  approveIKCReport(userId: ID!, ikcReportId: ID!): Boolean
+  denyIKCReport(userId: ID!, ikcReportId: ID!): Boolean
 
   # # Research Project mutations
   createResearchProject(
@@ -81,29 +90,34 @@ type Mutation {
     endDate: DateTime!
   ): ID
   addPartnerOrg(userId: ID!, researchProjectId: ID!, partnerOrgId: ID!): Boolean
-  removePartnerOrg(
+  addResearchProjectAdmin(
     userId: ID!
+    newAdminId: ID!
     researchProjectId: ID!
-    partnerOrgId: ID!
   ): Boolean
-  addNewAdmin(userId: ID!, newAdmin: ID!): Boolean
-  removeAdmin(userId: ID!, adminId: ID!): Boolean
+  removeResearchProjectAdmin(
+    userId: ID!
+    removedAdminId: ID!
+    researchProjectId: ID!
+  ): Boolean
 }
 
 type User {
   id: ID!
   firstName: String!
   lastName: String!
+  email: String!
   siteAdmin: Boolean!
   active: Boolean
 }
 
-# TODO: implement below types , should be roughly in this order but commenting out to avoid issues with prisma schema being different from graphql
 # in general refer to prisma but leave out some parts which may not be needed (ex include user id not user obj in contributor...)
 type Contributor {
   id: ID
   userId: ID!
+
   partnerOrgId: ID!
+  researchOrgId: ID!
 
   hourlyRate: Float!
   benRatePer: Float!
@@ -126,12 +140,14 @@ type HourContribution {
 type OtherContribution {
   itemName: String!
   value: Float!
+  items: Int!
 }
 
 type Contribution {
   id: ID!
+  contributorId: ID!
   date: DateTime!
-  details: String
+  details: String!
 
   hourContribution: HourContribution
   otherContribution: OtherContribution
@@ -149,12 +165,18 @@ type IKCReport {
   approvalDate: DateTime!
 }
 
+# reduce output as research proj don't need to know org admins
+type PartnerOrgItem {
+  id: ID!
+  name: String!
+  contributors: [Contributor]
+}
 type ResearchProject {
   id: ID!
   projectTitle: String
   startDate: DateTime
   endDate: DateTime
-  admins: [User]
-  projectPartners: [PartnerOrg]
+  admins: [ID]
+  projectPartners: [PartnerOrgItem]
   ikcReports: [IKCReport]
 }
