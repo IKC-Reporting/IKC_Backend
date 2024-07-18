@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import prisma from "../../libs/prisma";
 import { logger } from "../utils/Logger";
-import { getAdminIds, getContributorArray } from "../utils/reducers";
+import { getPartnerOrg } from "../utils/reducers";
 
 export default {
   Query: {
@@ -19,20 +19,43 @@ export default {
           },
         });
 
-        const adminIds = getAdminIds(partnerOrg.admins);
-
-        const contributors = getContributorArray(partnerOrg.contributors);
-
-        return {
-          id: partnerOrg.id,
-          name: partnerOrg.name,
-          admins: adminIds,
-          contributors,
-        };
+        return getPartnerOrg(partnerOrg);
       } catch (error) {
         logger.error(`Error querying partner organization: ${error}`);
         return null;
       }
+    },
+    getAllOrgsForUser: async (parent, args, context, info) => {
+      const { userId } = args;
+
+      logger.info(`Querying all partner organizations for user: ${userId}`);
+
+      const partnerOrgs = await prisma.partnerOrg.findMany({
+        where: { admins: { some: { id: userId } } },
+        include: {
+          contributors: true,
+          admins: true,
+        },
+      });
+
+      return partnerOrgs.map((partnerOrg) => getPartnerOrg(partnerOrg));
+    },
+    getAllOrgsForProject: async (parent, args, context, info) => {
+      const { projectId } = args;
+
+      logger.info(
+        `Querying all partner organizations for project: ${projectId}`
+      );
+
+      const partnerOrgs = await prisma.partnerOrg.findMany({
+        where: { ResearchProjects: { some: { id: projectId } } },
+        include: {
+          contributors: true,
+          admins: true,
+        },
+      });
+
+      return partnerOrgs.map((partnerOrg) => getPartnerOrg(partnerOrg));
     },
   },
   Mutation: {

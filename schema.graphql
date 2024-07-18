@@ -2,12 +2,16 @@ scalar DateTime
 
 type Query {
   user(id: ID!): User
+  getAllContributionsForUser(userId: ID!): [Contribution]
+  getAllContributionsForContributor(contributorId: ID!): [Contribution]
   login(email: String!, password: String!): ID
   contributor(id: ID!): Contributor
   partnerOrg(id: ID!): PartnerOrg
+  getAllOrgsForUser(userId: ID!): [PartnerOrg]
   contribution(id: ID!): Contribution
   ikcReport(id: ID!): IKCReport
   researchProject(id: ID!): ResearchProject
+  getAllOrgsForProject(projectId: ID!): [PartnerOrg]
 }
 
 type Mutation {
