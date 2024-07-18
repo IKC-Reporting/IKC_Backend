@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import prisma from "../../libs/prisma";
 import { logger } from "../utils/Logger";
+import { getContribution, getContributionsArray } from "../utils/reducers";
 
 export default {
   Query: {
@@ -9,48 +10,71 @@ export default {
       logger.info(`querying contribution with id: ${id}`);
 
       try {
-        // return all (should only have one hour / other so one will be null)
-        const contribution = await prisma.contribItem.findUniqueOrThrow({
+        const contribution = await prisma.contribItem.findUnique({
           where: { id },
           include: {
             Contributor: true,
             IKCReport: true,
+            hourContribution: true,
+            otherContribution: true,
           },
         });
 
-        const hourContribution = await prisma.hourContribution.findUnique({
-          where: { contribItemId: id },
-        });
-
-        if (hourContribution) {
-          return {
-            ...contribution,
-            hourContribution: {
-              hours: hourContribution.hours,
-              hourlyRate: hourContribution.hourlyRate,
-              benRatePer: hourContribution.benRatePer,
-            },
-            otherContribution: null,
-          };
-        }
-        const otherContribution = await prisma.otherContribution.findUnique({
-          where: { contribItemId: id },
-        });
-        if (otherContribution) {
-          // have to manually assign sub-items due to foreign key...
-          return {
-            ...contribution,
-            hourContribution: null,
-            otherContribution: {
-              itemName: otherContribution.itemName,
-              value: otherContribution.value,
-              items: otherContribution.items,
-            },
-          };
-        }
+        // putting this into a function as it is reused elsewhere
+        return getContribution(contribution);
       } catch (error) {
         logger.error(`error with contribution query: ${error}`);
         return null;
+      }
+    },
+    getAllContributionsForUser: async (parent, args, context, info) => {
+      const { userId } = args;
+
+      logger.info(`getting all contributions for user: ${userId}`);
+      try {
+        const user = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          include: { contributorAssignments: { select: { id: true } } },
+        });
+
+        const contributions = await prisma.contribItem.findMany({
+          where: {
+            contributorId: {
+              in: user.contributorAssignments.map(
+                (contributor) => contributor.id
+              ),
+            },
+          },
+          include: { hourContribution: true, otherContribution: true },
+        });
+
+        return getContributionsArray(contributions);
+      } catch (error) {
+        throw new Error(
+          `error with getAllContributionsForUser query: ${error}`
+        );
+      }
+    },
+    getAllContributionsForContributor: async (parent, args, context, info) => {
+      const { contributorId } = args;
+      logger.info(
+        `getting all contributions for contributor: ${contributorId}`
+      );
+      try {
+        const contributor = await prisma.contributor.findUniqueOrThrow({
+          where: { id: contributorId },
+          include: {
+            contributions: {
+              include: { hourContribution: true, otherContribution: true },
+            },
+          },
+        });
+
+        return getContributionsArray(contributor.contributions);
+      } catch (error) {
+        throw new Error(
+          `error with getAllContributionsForUser query: ${error}`
+        );
       }
     },
   },

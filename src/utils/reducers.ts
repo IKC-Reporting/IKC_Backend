@@ -31,6 +31,35 @@ export const getContributorArray = (
   }, []);
 };
 
+export const getContribution = (contribution) => {
+  // return all (should only have one hour / other so one will be null)
+
+  if (contribution?.hourContribution) {
+    return {
+      ...contribution,
+      hourContribution: {
+        hours: contribution.hourContribution.hours,
+        hourlyRate: contribution.hourContribution.hourlyRate,
+        benRatePer: contribution.hourContribution.benRatePer,
+      },
+      otherContribution: null,
+    };
+  }
+
+  if (contribution?.otherContribution) {
+    // have to manually assign sub-items due to foreign key...
+    return {
+      ...contribution,
+      hourContribution: null,
+      otherContribution: {
+        itemName: contribution.otherContribution.itemName,
+        value: contribution.otherContribution.value,
+        items: contribution.otherContribution.items,
+      },
+    };
+  }
+};
+
 // couldn't get this to work with input validation due to issues implementing https://www.prisma.io/docs/orm/prisma-client/type-safety/operating-against-partial-structures-of-model-types
 export const getProjectPartners = (projectPartners): PartnerOrgItem[] => {
   return projectPartners.reduce((previousValue, currentValue) => {
@@ -45,25 +74,51 @@ export const getProjectPartners = (projectPartners): PartnerOrgItem[] => {
   }, []);
 };
 
+export const getPartnerOrg = (partnerOrg) => {
+  const adminIds = getAdminIds(partnerOrg.admins);
+
+  const contributors = getContributorArray(partnerOrg.contributors);
+
+  return {
+    id: partnerOrg.id,
+    name: partnerOrg.name,
+    admins: adminIds,
+    contributors,
+  };
+};
+
 export const getContributionsArray = (contributions): Contribution[] => {
   return contributions.reduce((previousValue, currentValue) => {
+    let hourContribution = null;
+    let otherContribution = null;
+
+    // need to check if they are null as there should only be one
+    if (currentValue?.hourContribution) {
+      hourContribution = {
+        hours: currentValue.hourContribution.hours,
+        hourlyRate: currentValue.hourContribution.hourlyRate,
+        benRatePer: currentValue.hourContribution.benRatePer,
+      };
+    } else if (currentValue?.otherContribution) {
+      otherContribution = {
+        itemName: currentValue.otherContribution.itemName,
+        value: currentValue.otherContribution.value,
+        items: currentValue.otherContribution.items,
+      };
+    } else {
+      throw new Error(
+        `no contribution sub-item, unexpected values in contribution ${currentValue.id}`
+      );
+    }
     return [
       ...previousValue,
       {
         id: currentValue.id,
-        date: currentValue.data,
+        contributorId: currentValue.contributorId,
+        date: currentValue.date,
         details: currentValue.details,
-
-        hourContribution: {
-          hours: currentValue.hourContribution.hours,
-          hourlyRate: currentValue.hourContribution.hourlyRate,
-          benRatePer: currentValue.hourContribution.benRatePer,
-        },
-        otherContribution: {
-          itemName: currentValue.otherContribution.itemName,
-          value: currentValue.otherContribution.value,
-          items: currentValue.otherContribution.items,
-        },
+        hourContribution,
+        otherContribution,
       },
     ];
   }, []);
