@@ -1,11 +1,7 @@
 import { randomUUID } from "crypto";
 import prisma from "../../libs/prisma";
 import { logger } from "../utils/Logger";
-import {
-  getAdminIds,
-  getIKCReportArray,
-  getProjectPartners,
-} from "../utils/reducers";
+import { getResearchProject } from "../utils/reducers";
 
 export default {
   Query: {
@@ -15,58 +11,22 @@ export default {
       logger.info(`Querying research project with id: ${id}`);
 
       try {
-        const researchProject = await prisma.researchProject.findUnique({
-          where: { id },
-          include: {
-            admins: true,
-            projectPartners: {
-              select: { id: true, name: true, contributors: true },
-            },
-            ikcReports: {
-              select: {
-                id: true,
-                partnerOrgId: true,
-                reportStartDate: true,
-                reportEndDate: true,
-                Contributions: {
-                  select: {
-                    id: true,
-                    contributorId: true,
-                    date: true,
-                    details: true,
-                    hourContribution: true,
-                    otherContribution: true,
-                  },
-                },
-                submitterId: true,
-                isApproved: true,
-                approverId: true,
-                approvalDate: true,
-              },
-            },
-          },
-        });
-
-        const projectAdmins = getAdminIds(researchProject.admins);
-
-        const projectPartners = getProjectPartners(
-          researchProject.projectPartners
-        );
-        const projectReports = getIKCReportArray(researchProject.ikcReports);
-
-        return {
-          id: researchProject.id,
-          projectTitle: researchProject.projectTitle,
-          startDate: researchProject.startDate,
-          endDate: researchProject.endDate,
-          admins: projectAdmins,
-          projectPartners: projectPartners,
-          ikcReports: projectReports,
-        };
+        return await getResearchProject(id);
       } catch (error) {
         logger.error(`Error querying research project: ${error}`);
         return null;
       }
+    },
+    getAllProjForOrgs: async (parent, args, context, info) => {
+      const { orgId } = args;
+
+      logger.info(`Querying all projects for partner organization: ${orgId}`);
+
+      const researchProjects = await prisma.researchProject.findMany({
+        where: { projectPartners: { some: { id: orgId } } },
+      });
+
+      return researchProjects.map((project) => getResearchProject(project.id));
     },
   },
   Mutation: {
