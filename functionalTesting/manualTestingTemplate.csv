@@ -84,19 +84,22 @@ removeContribution (mutation),badUserRemoveContribution,remove a contribution wi
 removeContribution (mutation),goodUserRemoveContribution,remove a contribution with valid user id (24a7cf8c-feca-4863-87e8-1952a18a6973) and contribution id (1e137e1a-ca37-432a-bde1-7cf93946706a), return true
 removeContribution (mutation),goodOrgAdminRemoveContribution,remove a contribution with valid org admin id (88c150cc-1235-4523-9224-65caafa935eb) and contribution id (1e137e1a-ca37-432a-bde1-7cf93946706a), return true
 removeContribution (mutation),goodSiteAdminRemoveContribution,remove a contribution with valid site admin id (402a8052-9c4d-496e-bd17-d25f3d0c2bf7) and contribution id (1e137e1a-ca37-432a-bde1-7cf93946706a), return true
-ikcReport (query),goodIdIKCReportQuery,query a bad ikc report id (bad-id), return null
-ikcReport (query),badIdIKCReportQuery,query a good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660), return info
+ikcReport (query),badIdIKCReportQuery,query a bad ikc report id (bad-id), return null
+ikcReport (query),goodIdIKCReportQuery,query a good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660), return info
 createIKCReport (mutation),invalidUserCreateIKCReport,create an ikc report with bad user id  (bad-id),return null
 createIKCReport (mutation),invalidPartnerOrgCreateIKCReport,create an ikc report with good id (88c150cc-1235-4523-9224-65caafa935eb) and bad partner org id (bad-id), return null
 createIKCReport (mutation),badUserCreateIKCReport,create an ikc report with nonAdmin user id (88c150cc-1235-4523-9224-65caafa935eb) for partnerOrg (f27e212e-76c2-4977-8fd5-9b5367a31b68),return null
 createIKCReport (mutation),badContributionsCreateIKCReport,create an ikc report with good user id (88c150cc-1235-4523-9224-65caafa935eb) and good partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but no contributions [], return false
 createIKCReport (mutation),goodCreateIKCReport, create an ikc report with good user id (88c150cc-1235-4523-9224-65caafa935eb) and good partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) and contributions (e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92), return true
-
 submitIKCReport (mutation),invalidIKCReportIdSubmitIKCReport,submit IKC report with invalid ikc report(bad-id),return false
-submitIKCReport (mutation),invalidSubmitterIdSubmitIKCReport,submit IKC report with invalid submitter (bad-id),return false
-submitIKCReport (mutation),badSubmitterIdSubmitIKCReport,submit IKC report with nonadmin submitter (),return false
-submitIKCReport (mutation),submitterIdSubmitIKCReport,submit IKC report with good ikc report id () and valid submitter (),return true
+submitIKCReport (mutation),invalidUserSubmitIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) but invalid user (bad-id),return false
+submitIKCReport (mutation),badUserSubmitIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) but non-admin submitter (24a7cf8c-feca-4863-87e8-1952a18a6973),return false
+submitIKCReport (mutation),goodSubmitIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) and valid submitter (88c150cc-1235-4523-9224-65caafa935eb),return true
 approveIKCReport (mutation),invalidIKCReportIdApproveIKCReport,submit IKC report with invalid ikc report(bad-id),return false
-approveIKCReport (mutation),submitterIdApproveIKCReport,submit IKC report with invalid submitter (bad-id),return false
-approveIKCReport (mutation),submitterIdApproveIKCReport,submit IKC report with nonadmin submitter (),return false
-approveIKCReport (mutation),submitterIdApproveIKCReport,submit IKC report with good ikc report id () and valid submitter (),return true
+approveIKCReport (mutation),invalidAdminApproveIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) and invalid admin (bad-id),return false
+approveIKCReport (mutation),badAdminApproveIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) and nonadmin admin (24a7cf8c-feca-4863-87e8-1952a18a6973),return false
+approveIKCReport (mutation),goodApproveIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) and valid admin (88c150cc-1235-4523-9224-65caafa935eb),return true
+denyIKCReport (mutation),invalidIKCReportIdDenyIKCReport,submit IKC report with invalid ikc report(bad-id),return false
+denyIKCReport (mutation),invalidAdminDenyIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) and invalid admin (bad-id),return false
+denyIKCReport (mutation),badUserDenyIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) and nonadmin admin (24a7cf8c-feca-4863-87e8-1952a18a6973),return false
+denyIKCReport (mutation),goodDenyIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) and valid admin (88c150cc-1235-4523-9224-65caafa935eb),return true

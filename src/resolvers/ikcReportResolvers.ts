@@ -43,7 +43,8 @@ export default {
         if (
           !user.PartnerOrgAdminAssignments.some(
             (assign) => assign.id === partnerOrgId
-          )
+          ) &&
+          !user.siteAdmin
         ) {
           throw new Error(`invalid permissions for user`);
         }
@@ -57,14 +58,9 @@ export default {
         });
 
         let reportStartDate = contributions[0].date;
-        let reportEndDate = contributions[0].date;
         contributions.forEach((contribution) => {
           if (contribution.date < reportStartDate) {
             reportStartDate = contribution.date;
-          }
-
-          if (contribution.date > reportEndDate) {
-            reportEndDate = contribution.date;
           }
         });
 
@@ -73,7 +69,6 @@ export default {
             id: randomUUID(),
             partnerOrgId,
             reportStartDate: new Date(),
-            reportEndDate: null,
             Contributions: {
               connect: contributionIds.map((id) => ({ id })),
             },
@@ -88,66 +83,124 @@ export default {
       }
     },
     submitIKCReport: async (parent, args, context, info) => {
-      const { submitterId, ikcReportId, submissionDate } = args;
+      const { userId, ikcReportId } = args;
 
-      logger.info(
-        `Submitting IKC report ${ikcReportId} by user ${submitterId}`
-      );
+      logger.info(`Submitting IKC report ${ikcReportId} by user ${userId}`);
 
       try {
-        const ikcReport = await prisma.iKCReport.update({
+        const submitter = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          include: { PartnerOrgAdminAssignments: true },
+        });
+
+        const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
+          where: { id: ikcReportId },
+        });
+
+        if (
+          !submitter.PartnerOrgAdminAssignments.some(
+            (assign) => assign.id === ikcReport.partnerOrgId
+          ) &&
+          !submitter.siteAdmin
+        ) {
+          throw new Error(`invalid permissions for user`);
+        }
+
+        await prisma.iKCReport.update({
           where: { id: ikcReportId },
           data: {
-            submitterId,
-            submissionDate,
+            submissionDate: new Date(),
+            submitterId: userId,
           },
         });
 
         logger.info(`Submitted IKC report with id: ${ikcReportId}`);
-        return ikcReport.id;
+        return true;
       } catch (error) {
         logger.error(`Error submitting IKC report: ${error}`);
-        return null;
+        return false;
       }
     },
-    approveIKCReport: async (parent, args, context, info) => {
-      const { userId, ikcReportID } = args;
 
-      logger.info(`Approving IKC report ${ikcReportID} by user ${userId}`);
+    approveIKCReport: async (parent, args, context, info) => {
+      const { userId, ikcReportId } = args;
+
+      logger.info(`user ${userId} approving IKC report ${ikcReportId}`);
 
       try {
-        const ikcReport = await prisma.iKCReport.update({
-          where: { id: ikcReportID },
+        const admin = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          include: { PartnerOrgAdminAssignments: true },
+        });
+
+        const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
+          where: { id: ikcReportId },
+        });
+
+        if (
+          !admin.PartnerOrgAdminAssignments.some(
+            (assign) => assign.id === ikcReport.partnerOrgId
+          ) &&
+          !admin.siteAdmin
+        ) {
+          throw new Error(`invalid permissions for user`);
+        }
+
+        await prisma.iKCReport.update({
+          where: { id: ikcReportId },
           data: {
-            isApproved: true,
-            approverId: userId,
             approvalDate: new Date(),
+            approverId: userId,
+            isApproved: true,
           },
         });
 
-        logger.info(`Approved IKC report with id: ${ikcReportID}`);
+        logger.info(`Approved IKC report with id: ${ikcReportId}`);
         return true;
       } catch (error) {
         logger.error(`Error approving IKC report: ${error}`);
         return false;
       }
     },
-    denyIKCReport: async (parent, args, context, info) => {
-      const { userId, ikcReportID } = args;
 
-      logger.info(`Denying IKC report ${ikcReportID} by user ${userId}`);
+    denyIKCReport: async (parent, args, context, info) => {
+      const { userId, ikcReportId } = args;
+
+      logger.info(
+        `user ${userId} denying IKC report ${ikcReportId} submission`
+      );
 
       try {
-        const ikcReport = await prisma.iKCReport.update({
-          where: { id: ikcReportID },
+        const admin = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          include: { PartnerOrgAdminAssignments: true },
+        });
+
+        const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
+          where: { id: ikcReportId },
+        });
+
+        if (
+          !admin.PartnerOrgAdminAssignments.some(
+            (assign) => assign.id === ikcReport.partnerOrgId
+          ) &&
+          !admin.siteAdmin
+        ) {
+          throw new Error(`invalid permissions for user`);
+        }
+
+        await prisma.iKCReport.update({
+          where: { id: ikcReportId },
           data: {
+            submissionDate: null,
+            submitterId: null,
+            approvalDate: null,
+            approverId: null,
             isApproved: false,
-            approverId: userId,
-            approvalDate: new Date(),
           },
         });
 
-        logger.info(`Denied IKC report with id: ${ikcReportID}`);
+        logger.info(`Denied IKC report with id: ${ikcReportId}`);
         return true;
       } catch (error) {
         logger.error(`Error denying IKC report: ${error}`);

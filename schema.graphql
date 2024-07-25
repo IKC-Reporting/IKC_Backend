@@ -70,11 +70,7 @@ type Mutation {
 
   # # IKC Report mutations
   createIKCReport(userId: ID!, partnerOrgId: ID!, contributionIds: [ID]): ID
-  submitIKCReport(
-    ikcReportId: ID!
-    submitterId: ID!
-    submissionDate: DateTime!
-  ): Boolean
+  submitIKCReport(ikcReportId: ID!, userId: ID!): Boolean
   approveIKCReport(userId: ID!, ikcReportId: ID!): Boolean
   denyIKCReport(userId: ID!, ikcReportId: ID!): Boolean
 
@@ -126,7 +122,7 @@ type Contributor {
   userId: ID!
 
   partnerOrgId: ID!
-  researchOrgId: ID!
+  researchProjectId: ID!
 
   hourlyRate: Float!
   benRatePer: Float!
@@ -166,10 +162,12 @@ type Contribution {
 type IKCReport {
   id: ID!
   partnerOrgId: ID!
+  researchProjectId: ID!
   reportStartDate: DateTime!
-  reportEndDate: DateTime
+
   contributions: [Contribution]
   submitterId: ID
+  submissionDate: DateTime
   isApproved: Boolean
   approverId: ID
   approvalDate: DateTime

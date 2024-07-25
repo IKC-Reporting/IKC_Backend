@@ -178,7 +178,7 @@ async function main() {
     where: { id: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92" },
     update: {},
     create: {
-      id: "d6f7650b-345c-46ae-89a1-01f7be5374d7",
+      id: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92",
       contributorId: "fee9a62e-b403-4162-8e43-deb6b879ac9",
       date: new Date("2023-01-07"),
       details: "example details for ikc report submission test",
@@ -240,12 +240,16 @@ async function main() {
     },
   });
 
-  await prisma.iKCReport.create({
-    data: {
+  console.log("creating ikc report with one contribution");
+
+  await prisma.iKCReport.upsert({
+    where: { id: "9cee81d9-6b9e-4348-ac1b-caaa7534a660" },
+    update: {},
+    create: {
       id: "9cee81d9-6b9e-4348-ac1b-caaa7534a660",
       partnerOrgId: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576",
       reportStartDate: new Date("2024-01-01"),
-      reportEndDate: new Date("2024-01-01"),
+      submissionDate: new Date("2024-03-01"),
       Contributions: {
         connect: [{ id: "ef67def3-0bec-497d-ab90-cba50429760e" }],
       },

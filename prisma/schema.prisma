@@ -17,8 +17,8 @@ model User {
   contributorAssignments          Contributor[]
   PartnerOrgAdminAssignments      PartnerOrg[]
   ResearchProjectAdminAssignments ResearchProject[]
-  Submissions                     IKCReport[]       @relation(name: "submitterToIKCReport")
-  Approvals                       IKCReport[]       @relation(name: "approverToIKCReport")
+  Submissions                     IKCReport[]       @relation(name: "_SubmitterToIKCReport")
+  Approvals                       IKCReport[]       @relation(name: "_ApproverToIKCReport")
 }
 
 model Contributor {
@@ -86,17 +86,16 @@ model IKCReport {
   partnerOrgId      String
   ResearchProject   ResearchProject? @relation(fields: [researchProjectId], references: [id])
   researchProjectId String?
-  submitter         User?            @relation(name: "submitterToIKCReport", fields: [submitterId], references: [id])
+  submitter         User?            @relation(name: "_SubmitterToIKCReport", fields: [submitterId], references: [id])
   submitterId       String?
-  approver          User?            @relation(name: "approverToIKCReport", fields: [approverId], references: [id])
+  approver          User?            @relation(name: "_ApproverToIKCReport", fields: [approverId], references: [id])
   approverId        String?
   Contributions     ContribItem[]
 
   reportStartDate DateTime
-  reportEndDate   DateTime
   submissionDate  DateTime?
-  isApproved      Boolean?
   approvalDate    DateTime?
+  isApproved      Boolean?
 }
 
 model ResearchProject {
