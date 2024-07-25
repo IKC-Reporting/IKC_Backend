@@ -69,22 +69,26 @@ type Mutation {
   removeContribution(userId: ID!, contributionId: ID!): Boolean
 
   # # IKC Report mutations
-  createIKCReport(
-    userId: ID!
-    partnerOrgId: ID!
-    reportStartDate: DateTime!
-    reportEndDate: DateTime!
-    employeeHourIds: [ID]
-    otherContributionIds: [ID]
-  ): ID
+  createIKCReport(userId: ID!, partnerOrgId: ID!, contributionIds: [ID]): ID
   submitIKCReport(
-    userId: ID!
     ikcReportId: ID!
     submitterId: ID!
     submissionDate: DateTime!
-  ): ID
+  ): Boolean
   approveIKCReport(userId: ID!, ikcReportId: ID!): Boolean
   denyIKCReport(userId: ID!, ikcReportId: ID!): Boolean
+
+  # can only do these two for non-approved reports
+  addContributionToReport(
+    userId: ID!
+    ikcReportId: ID!
+    contributionId: ID!
+  ): Boolean
+  removeContributionToReport(
+    userId: ID!
+    ikcReportId: ID!
+    contributionId: ID!
+  ): Boolean
 
   # # Research Project mutations
   createResearchProject(
@@ -158,16 +162,17 @@ type Contribution {
   otherContribution: OtherContribution
 }
 
+# start date is the date the ikc report is created, end date is the date of the submission
 type IKCReport {
   id: ID!
   partnerOrgId: ID!
   reportStartDate: DateTime!
-  reportEndDate: DateTime!
+  reportEndDate: DateTime
   contributions: [Contribution]
   submitterId: ID
   isApproved: Boolean
   approverId: ID
-  approvalDate: DateTime!
+  approvalDate: DateTime
 }
 
 # reduce output as research proj don't need to know org admins

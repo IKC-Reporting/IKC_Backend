@@ -2,6 +2,7 @@
 
 1. setup env folder based on .env.example (copy into .env and update as needed)
 2. `docker-compose up -d`
+   1. you may need to delete the `ikc-data` volume if anything major in the db schema is altered, to ensure that it is reset, in a production environment there are better ways with prisma specific commands but for now this should be fine as a mitigation
 3. `npm install` / `npm ci` (only need to once for below)
 4. `npm run migrate` (to seed the DB if it is not already or prisma schema changes)
 5. `npm run start` or `npm run dev` depending on workflow

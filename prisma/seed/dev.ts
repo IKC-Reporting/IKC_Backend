@@ -153,6 +153,50 @@ async function main() {
   });
 
   await prisma.contribItem.upsert({
+    where: { id: "d6f7650b-345c-46ae-89a1-01f7be5374d7" },
+    update: {},
+    create: {
+      id: "d6f7650b-345c-46ae-89a1-01f7be5374d7",
+      contributorId: "fee9a62e-b403-4162-8e43-deb6b879ac9",
+      date: new Date("2023-02-02"),
+      details: "example details with float",
+    },
+  });
+
+  await prisma.hourContribution.upsert({
+    where: { contribItemId: "d6f7650b-345c-46ae-89a1-01f7be5374d7" },
+    update: {},
+    create: {
+      contribItemId: "d6f7650b-345c-46ae-89a1-01f7be5374d7",
+      hours: 9.25,
+      hourlyRate: 21,
+      benRatePer: 0.24,
+    },
+  });
+
+  await prisma.contribItem.upsert({
+    where: { id: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92" },
+    update: {},
+    create: {
+      id: "d6f7650b-345c-46ae-89a1-01f7be5374d7",
+      contributorId: "fee9a62e-b403-4162-8e43-deb6b879ac9",
+      date: new Date("2023-01-07"),
+      details: "example details for ikc report submission test",
+    },
+  });
+
+  await prisma.hourContribution.upsert({
+    where: { contribItemId: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92" },
+    update: {},
+    create: {
+      contribItemId: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92",
+      hours: 3,
+      hourlyRate: 20,
+      benRatePer: 0.2,
+    },
+  });
+
+  await prisma.contribItem.upsert({
     where: { id: "8d5e869c-1988-45ba-a95c-44b1d30ac3c0" },
     update: {},
     create: {
@@ -171,6 +215,40 @@ async function main() {
       itemName: "coca-cola",
       value: 1.99,
       items: 1,
+    },
+  });
+
+  await prisma.contribItem.upsert({
+    where: { id: "ef67def3-0bec-497d-ab90-cba50429760e" },
+    update: {},
+    create: {
+      id: "ef67def3-0bec-497d-ab90-cba50429760e",
+      contributorId: "fee9a62e-b403-4162-8e43-deb6b879ac9",
+      date: new Date("2024-01-01"),
+      details: "example details...",
+    },
+  });
+
+  await prisma.otherContribution.upsert({
+    where: { contribItemId: "ef67def3-0bec-497d-ab90-cba50429760e" },
+    update: {},
+    create: {
+      contribItemId: "ef67def3-0bec-497d-ab90-cba50429760e",
+      itemName: "sprite",
+      value: 20.1,
+      items: 2,
+    },
+  });
+
+  await prisma.iKCReport.create({
+    data: {
+      id: "9cee81d9-6b9e-4348-ac1b-caaa7534a660",
+      partnerOrgId: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576",
+      reportStartDate: new Date("2024-01-01"),
+      reportEndDate: new Date("2024-01-01"),
+      Contributions: {
+        connect: [{ id: "ef67def3-0bec-497d-ab90-cba50429760e" }],
+      },
     },
   });
 }

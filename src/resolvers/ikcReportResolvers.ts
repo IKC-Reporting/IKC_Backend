@@ -12,17 +12,14 @@ export default {
       try {
         const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
           where: { id },
-          include: {
-            Contributions: {
-              include: {
-                hourContribution: true,
-                otherContribution: true,
-              },
-            },
-          },
         });
 
-        return { ...ikcReport };
+        const contributions = await prisma.contribItem.findMany({
+          where: { ikcReportId: id },
+          include: { otherContribution: true, hourContribution: true },
+        });
+
+        return { ...ikcReport, contributions: contributions };
       } catch (error) {
         logger.error(`Error querying IKC report: ${error}`);
         return null;
@@ -31,31 +28,54 @@ export default {
   },
   Mutation: {
     createIKCReport: async (parent, args, context, info) => {
-      const {
-        userId,
-        partnerOrgId,
-        reportStartDate,
-        reportEndDate,
-        employeeHourIds,
-        otherContributionIds,
-      } = args;
+      const { userId, partnerOrgId, contributionIds } = args;
 
       logger.info(
         `Creating IKC report for partner organization ${partnerOrgId} by user ${userId}`
       );
 
       try {
+        const user = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          include: { PartnerOrgAdminAssignments: true },
+        });
+
+        if (
+          !user.PartnerOrgAdminAssignments.some(
+            (assign) => assign.id === partnerOrgId
+          )
+        ) {
+          throw new Error(`invalid permissions for user`);
+        }
+
+        // only add contributions if the partnerOrg is connected
+        const contributions = await prisma.contribItem.findMany({
+          where: {
+            id: { in: contributionIds },
+            Contributor: { partnerOrgId: partnerOrgId },
+          },
+        });
+
+        let reportStartDate = contributions[0].date;
+        let reportEndDate = contributions[0].date;
+        contributions.forEach((contribution) => {
+          if (contribution.date < reportStartDate) {
+            reportStartDate = contribution.date;
+          }
+
+          if (contribution.date > reportEndDate) {
+            reportEndDate = contribution.date;
+          }
+        });
+
         const ikcReport = await prisma.iKCReport.create({
           data: {
             id: randomUUID(),
             partnerOrgId,
-            reportStartDate,
-            reportEndDate,
+            reportStartDate: new Date(),
+            reportEndDate: null,
             Contributions: {
-              connect: [
-                ...employeeHourIds.map((id) => ({ id })),
-                ...otherContributionIds.map((id) => ({ id })),
-              ],
+              connect: contributionIds.map((id) => ({ id })),
             },
           },
         });
@@ -68,22 +88,22 @@ export default {
       }
     },
     submitIKCReport: async (parent, args, context, info) => {
-      const { submitterId, ikcReportID, submissionDate } = args;
+      const { submitterId, ikcReportId, submissionDate } = args;
 
       logger.info(
-        `Submitting IKC report ${ikcReportID} by user ${submitterId}`
+        `Submitting IKC report ${ikcReportId} by user ${submitterId}`
       );
 
       try {
         const ikcReport = await prisma.iKCReport.update({
-          where: { id: ikcReportID },
+          where: { id: ikcReportId },
           data: {
             submitterId,
             submissionDate,
           },
         });
 
-        logger.info(`Submitted IKC report with id: ${ikcReportID}`);
+        logger.info(`Submitted IKC report with id: ${ikcReportId}`);
         return ikcReport.id;
       } catch (error) {
         logger.error(`Error submitting IKC report: ${error}`);
