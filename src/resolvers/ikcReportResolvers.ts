@@ -28,7 +28,7 @@ export default {
   },
   Mutation: {
     createIKCReport: async (parent, args, context, info) => {
-      const { userId, partnerOrgId, contributionIds } = args;
+      const { userId, partnerOrgId, researchProjectId } = args;
 
       logger.info(
         `Creating IKC report for partner organization ${partnerOrgId} by user ${userId}`
@@ -49,29 +49,12 @@ export default {
           throw new Error(`invalid permissions for user`);
         }
 
-        // only add contributions if the partnerOrg is connected
-        const contributions = await prisma.contribItem.findMany({
-          where: {
-            id: { in: contributionIds },
-            Contributor: { partnerOrgId: partnerOrgId },
-          },
-        });
-
-        let reportStartDate = contributions[0].date;
-        contributions.forEach((contribution) => {
-          if (contribution.date < reportStartDate) {
-            reportStartDate = contribution.date;
-          }
-        });
-
         const ikcReport = await prisma.iKCReport.create({
           data: {
             id: randomUUID(),
             partnerOrgId,
+            researchProjectId,
             reportStartDate: new Date(),
-            Contributions: {
-              connect: contributionIds.map((id) => ({ id })),
-            },
           },
         });
 

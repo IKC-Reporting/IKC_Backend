@@ -248,6 +248,7 @@ async function main() {
     create: {
       id: "9cee81d9-6b9e-4348-ac1b-caaa7534a660",
       partnerOrgId: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576",
+      researchProjectId: "88a21a78-ef83-4091-baec-835f61391fb3",
       reportStartDate: new Date("2024-01-01"),
       submissionDate: new Date("2024-03-01"),
       Contributions: {

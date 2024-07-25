@@ -69,7 +69,7 @@ type Mutation {
   removeContribution(userId: ID!, contributionId: ID!): Boolean
 
   # # IKC Report mutations
-  createIKCReport(userId: ID!, partnerOrgId: ID!, contributionIds: [ID]): ID
+  createIKCReport(userId: ID!, partnerOrgId: ID!, researchProjectId: ID!): ID
   submitIKCReport(ikcReportId: ID!, userId: ID!): Boolean
   approveIKCReport(userId: ID!, ikcReportId: ID!): Boolean
   denyIKCReport(userId: ID!, ikcReportId: ID!): Boolean

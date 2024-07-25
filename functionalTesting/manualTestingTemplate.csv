@@ -89,8 +89,8 @@ ikcReport (query),goodIdIKCReportQuery,query a good ikc report id (9cee81d9-6b9e
 createIKCReport (mutation),invalidUserCreateIKCReport,create an ikc report with bad user id  (bad-id),return null
 createIKCReport (mutation),invalidPartnerOrgCreateIKCReport,create an ikc report with good id (88c150cc-1235-4523-9224-65caafa935eb) and bad partner org id (bad-id), return null
 createIKCReport (mutation),badUserCreateIKCReport,create an ikc report with nonAdmin user id (88c150cc-1235-4523-9224-65caafa935eb) for partnerOrg (f27e212e-76c2-4977-8fd5-9b5367a31b68),return null
-createIKCReport (mutation),badContributionsCreateIKCReport,create an ikc report with good user id (88c150cc-1235-4523-9224-65caafa935eb) and good partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) but no contributions [], return false
-createIKCReport (mutation),goodCreateIKCReport, create an ikc report with good user id (88c150cc-1235-4523-9224-65caafa935eb) and good partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) and contributions (e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92), return true
+createIKCReport (mutation),invalidResearchProjectCreateIKCReport,create an ikc report with good user id (88c150cc-1235-4523-9224-65caafa935eb) and good partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) and bad research project (bad id), return false
+createIKCReport (mutation),goodCreateIKCReport, create an ikc report with good user id (88c150cc-1235-4523-9224-65caafa935eb) and good partner org id (3ab3107d-09bc-44cd-b73b-0dfd17bd7576) and researchProject (88a21a78-ef83-4091-baec-835f61391fb3), return true
 submitIKCReport (mutation),invalidIKCReportIdSubmitIKCReport,submit IKC report with invalid ikc report(bad-id),return false
 submitIKCReport (mutation),invalidUserSubmitIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) but invalid user (bad-id),return false
 submitIKCReport (mutation),badUserSubmitIKCReport,submit IKC report with good ikc report id (9cee81d9-6b9e-4348-ac1b-caaa7534a660) but non-admin submitter (24a7cf8c-feca-4863-87e8-1952a18a6973),return false
