@@ -80,7 +80,7 @@ type Mutation {
     ikcReportId: ID!
     contributionId: ID!
   ): Boolean
-  removeContributionToReport(
+  removeContributionFromReport(
     userId: ID!
     ikcReportId: ID!
     contributionId: ID!

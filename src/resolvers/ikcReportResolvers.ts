@@ -49,6 +49,19 @@ export default {
           throw new Error(`invalid permissions for user`);
         }
 
+        const partnerOrg = await prisma.partnerOrg.findUniqueOrThrow({
+          where: { id: partnerOrgId },
+          include: { ResearchProjects: true },
+        });
+
+        if (
+          !partnerOrg.ResearchProjects.some(
+            (project) => project.id === researchProjectId
+          )
+        ) {
+          throw new Error(`project not connected to org`);
+        }
+
         const ikcReport = await prisma.iKCReport.create({
           data: {
             id: randomUUID(),
@@ -79,6 +92,11 @@ export default {
         const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
           where: { id: ikcReportId },
         });
+
+        if (ikcReport.isApproved) {
+          // don't think its too important to return null so just exist early...
+          return true;
+        }
 
         if (
           !submitter.PartnerOrgAdminAssignments.some(
@@ -113,7 +131,7 @@ export default {
       try {
         const admin = await prisma.user.findUniqueOrThrow({
           where: { id: userId },
-          include: { PartnerOrgAdminAssignments: true },
+          include: { ResearchProjectAdminAssignments: true },
         });
 
         const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
@@ -121,8 +139,8 @@ export default {
         });
 
         if (
-          !admin.PartnerOrgAdminAssignments.some(
-            (assign) => assign.id === ikcReport.partnerOrgId
+          !admin.ResearchProjectAdminAssignments.some(
+            (assign) => assign.id === ikcReport.researchProjectId
           ) &&
           !admin.siteAdmin
         ) {
@@ -156,7 +174,7 @@ export default {
       try {
         const admin = await prisma.user.findUniqueOrThrow({
           where: { id: userId },
-          include: { PartnerOrgAdminAssignments: true },
+          include: { ResearchProjectAdminAssignments: true },
         });
 
         const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
@@ -164,8 +182,8 @@ export default {
         });
 
         if (
-          !admin.PartnerOrgAdminAssignments.some(
-            (assign) => assign.id === ikcReport.partnerOrgId
+          !admin.ResearchProjectAdminAssignments.some(
+            (assign) => assign.id === ikcReport.researchProjectId
           ) &&
           !admin.siteAdmin
         ) {
@@ -187,6 +205,116 @@ export default {
         return true;
       } catch (error) {
         logger.error(`Error denying IKC report: ${error}`);
+        return false;
+      }
+    },
+
+    addContributionToReport: async (parent, args, context, info) => {
+      const { userId, ikcReportId, contributionId } = args;
+
+      logger.info(
+        `contribution ${contributionId} being added to IKC report ${ikcReportId} by user ${userId}`
+      );
+
+      try {
+        const admin = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          include: { PartnerOrgAdminAssignments: true },
+        });
+
+        const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
+          where: { id: ikcReportId },
+        });
+
+        if (
+          !admin.PartnerOrgAdminAssignments.some(
+            (assign) => assign.id === ikcReport.partnerOrgId
+          ) &&
+          !admin.siteAdmin
+        ) {
+          throw new Error(`invalid permissions for user`);
+        }
+
+        const contribution = await prisma.contribItem.findUniqueOrThrow({
+          where: { id: contributionId },
+          include: { Contributor: true },
+        });
+
+        if (contribution.Contributor.partnerOrgId !== ikcReport.partnerOrgId) {
+          throw new Error(`contribution not connected to partner org`);
+        } else if (
+          contribution.Contributor.researchProjectId !==
+          ikcReport.researchProjectId
+        ) {
+          throw new Error(`contribution not connected to project`);
+        }
+
+        await prisma.iKCReport.update({
+          where: { id: ikcReportId },
+          data: {
+            Contributions: { connect: { id: contributionId } },
+          },
+        });
+
+        logger.info(`added ${contributionId} to IKC report`);
+        return true;
+      } catch (error) {
+        logger.error(`Error adding contribution to IKC report: ${error}`);
+        return false;
+      }
+    },
+
+    removeContributionFromReport: async (parent, args, context, info) => {
+      const { userId, ikcReportId, contributionId } = args;
+
+      logger.info(
+        `contribution ${contributionId} being added to IKC report ${ikcReportId} by user ${userId}`
+      );
+
+      try {
+        const admin = await prisma.user.findUniqueOrThrow({
+          where: { id: userId },
+          include: { PartnerOrgAdminAssignments: true },
+        });
+
+        const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
+          where: { id: ikcReportId },
+        });
+
+        if (
+          !admin.PartnerOrgAdminAssignments.some(
+            (assign) => assign.id === ikcReport.partnerOrgId
+          ) &&
+          !admin.siteAdmin
+        ) {
+          throw new Error(`invalid permissions for user`);
+        }
+
+        const contribution = await prisma.contribItem.findUniqueOrThrow({
+          where: { id: contributionId },
+          include: { Contributor: true },
+        });
+
+        if (contribution.Contributor.partnerOrgId !== ikcReport.partnerOrgId) {
+          throw new Error(`contribution not connected to partner org`);
+        } else if (
+          contribution.Contributor.researchProjectId !==
+          ikcReport.researchProjectId
+        ) {
+          throw new Error(`contribution not connected to project`);
+        }
+
+        await prisma.iKCReport.update({
+          where: { id: ikcReportId },
+          data: {
+            Contributions: { disconnect: { id: contributionId } },
+          },
+        });
+
+        logger.info(`added ${contributionId} to IKC report`);
+        return true;
+      } catch (error) {
+        logger.error(`Error adding contribution to IKC report: ${error}`);
         return false;
       }
     },
