@@ -112,6 +112,9 @@ async function main() {
       startDate: new Date("2000/01/01"),
       endDate: new Date("3000/01/01"),
       admins: { connect: { id: "402a8052-9c4d-496e-bd17-d25f3d0c2bf7" } },
+      projectPartners: {
+        connect: { id: "f27e212e-76c2-4977-8fd5-9b5367a31b68" },
+      },
     },
   });
 
@@ -125,6 +128,19 @@ async function main() {
       userId: "24a7cf8c-feca-4863-87e8-1952a18a6973",
       partnerOrgId: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576",
       researchProjectId: "88a21a78-ef83-4091-baec-835f61391fb3",
+      hourlyRate: 20,
+      benRatePer: 0.2,
+    },
+  });
+
+  await prisma.contributor.upsert({
+    where: { id: "1b29dfd0-d506-4051-8aff-3f59b92f125c" },
+    update: {},
+    create: {
+      id: "1b29dfd0-d506-4051-8aff-3f59b92f125c",
+      userId: "d38cbf18-ac04-4517-96d5-289c2b6222c0",
+      partnerOrgId: "f27e212e-76c2-4977-8fd5-9b5367a31b68",
+      researchProjectId: "4455c019-a941-4ad3-806f-ebb0cf1a2ffb",
       hourlyRate: 20,
       benRatePer: 0.2,
     },
@@ -153,6 +169,50 @@ async function main() {
   });
 
   await prisma.contribItem.upsert({
+    where: { id: "d6f7650b-345c-46ae-89a1-01f7be5374d7" },
+    update: {},
+    create: {
+      id: "d6f7650b-345c-46ae-89a1-01f7be5374d7",
+      contributorId: "fee9a62e-b403-4162-8e43-deb6b879ac9",
+      date: new Date("2023-02-02"),
+      details: "example details with float",
+    },
+  });
+
+  await prisma.hourContribution.upsert({
+    where: { contribItemId: "d6f7650b-345c-46ae-89a1-01f7be5374d7" },
+    update: {},
+    create: {
+      contribItemId: "d6f7650b-345c-46ae-89a1-01f7be5374d7",
+      hours: 9.25,
+      hourlyRate: 21,
+      benRatePer: 0.24,
+    },
+  });
+
+  await prisma.contribItem.upsert({
+    where: { id: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92" },
+    update: {},
+    create: {
+      id: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92",
+      contributorId: "fee9a62e-b403-4162-8e43-deb6b879ac9",
+      date: new Date("2023-01-07"),
+      details: "example details for ikc report add contribution test",
+    },
+  });
+
+  await prisma.hourContribution.upsert({
+    where: { contribItemId: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92" },
+    update: {},
+    create: {
+      contribItemId: "e57ebd9c-0e91-4c86-b43d-a2f2afc5cb92",
+      hours: 3,
+      hourlyRate: 20,
+      benRatePer: 0.2,
+    },
+  });
+
+  await prisma.contribItem.upsert({
     where: { id: "8d5e869c-1988-45ba-a95c-44b1d30ac3c0" },
     update: {},
     create: {
@@ -171,6 +231,68 @@ async function main() {
       itemName: "coca-cola",
       value: 1.99,
       items: 1,
+    },
+  });
+
+  await prisma.contribItem.upsert({
+    where: { id: "ef67def3-0bec-497d-ab90-cba50429760e" },
+    update: {},
+    create: {
+      id: "ef67def3-0bec-497d-ab90-cba50429760e",
+      contributorId: "fee9a62e-b403-4162-8e43-deb6b879ac9",
+      date: new Date("2024-01-01"),
+      details: "example details...",
+    },
+  });
+
+  await prisma.otherContribution.upsert({
+    where: { contribItemId: "ef67def3-0bec-497d-ab90-cba50429760e" },
+    update: {},
+    create: {
+      contribItemId: "ef67def3-0bec-497d-ab90-cba50429760e",
+      itemName: "sprite",
+      value: 20.1,
+      items: 2,
+    },
+  });
+
+  // add contribution for another project
+  await prisma.contribItem.upsert({
+    where: { id: "63ea1fb6-1023-4f40-b87a-3be779fefcf9" },
+    update: {},
+    create: {
+      id: "63ea1fb6-1023-4f40-b87a-3be779fefcf9",
+      contributorId: "1b29dfd0-d506-4051-8aff-3f59b92f125c",
+      date: new Date("2024-07-11"),
+      details: "example details...",
+    },
+  });
+
+  await prisma.otherContribution.upsert({
+    where: { contribItemId: "63ea1fb6-1023-4f40-b87a-3be779fefcf9" },
+    update: {},
+    create: {
+      contribItemId: "63ea1fb6-1023-4f40-b87a-3be779fefcf9",
+      itemName: "pepsi",
+      value: 0.99,
+      items: 10,
+    },
+  });
+
+  console.log("creating ikc report with one contribution");
+
+  await prisma.iKCReport.upsert({
+    where: { id: "9cee81d9-6b9e-4348-ac1b-caaa7534a660" },
+    update: {},
+    create: {
+      id: "9cee81d9-6b9e-4348-ac1b-caaa7534a660",
+      partnerOrgId: "3ab3107d-09bc-44cd-b73b-0dfd17bd7576",
+      researchProjectId: "88a21a78-ef83-4091-baec-835f61391fb3",
+      reportStartDate: new Date("2024-01-01"),
+      submissionDate: new Date("2024-03-01"),
+      Contributions: {
+        connect: [{ id: "ef67def3-0bec-497d-ab90-cba50429760e" }],
+      },
     },
   });
 }

@@ -24,7 +24,7 @@ export const getContributorArray = (
         id: currentValue.id,
         userId: currentValue.userId,
         partnerOrgId: currentValue.partnerOrgId,
-        researchOrgId: currentValue.researchProjectId,
+        researchProjectId: currentValue.researchProjectId,
         hourlyRate: currentValue.hourlyRate,
         benRatePer: currentValue.benRatePer,
       },
@@ -133,7 +133,7 @@ export const getIKCReportArray = (ikcReports): IkcReport[] => {
         id: currentValue.id,
         partnerOrgId: currentValue.partnerOrgId,
         reportStartDate: currentValue.reportStartDate,
-        reportEndDate: currentValue.reportEndDate,
+        submissionDate: currentValue.submissionDate,
         contributions: getContributionsArray(currentValue.Contributions),
         submitterId: currentValue.submitterId,
         isApproved: currentValue.isApproved,
@@ -157,7 +157,7 @@ export const getResearchProject = async (id) => {
           id: true,
           partnerOrgId: true,
           reportStartDate: true,
-          reportEndDate: true,
+          submissionDate: true,
           Contributions: {
             select: {
               id: true,

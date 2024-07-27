@@ -21,7 +21,7 @@ export default {
           id: contributor.id,
           userId: contributor.userId,
           partnerOrgId: contributor.partnerOrgId,
-          researchOrgId: contributor.researchProjectId,
+          researchProjectId: contributor.researchProjectId,
           hourlyRate: contributor.hourlyRate,
           benRatePer: contributor.benRatePer,
         };
