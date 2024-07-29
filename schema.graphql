@@ -13,6 +13,8 @@ type Query {
   researchProject(id: ID!): ResearchProject
   getAllOrgsForProject(projectId: ID!): [PartnerOrg]
   getAllProjForOrgs(orgId: ID!): [ResearchProject]
+  getAllIKCByPartnerOrg(id: ID!): [IKCReport]
+  getAllApprovedContribByOrg(id: ID!): [ProjContrib]
 }
 
 type Mutation {
@@ -156,6 +158,16 @@ type Contribution {
 
   hourContribution: HourContribution
   otherContribution: OtherContribution
+}
+
+type MonthlyContrib {
+  month: String!
+  total: Float!
+}
+
+type ProjContrib {
+  projectName: String!
+  contributions: [MonthlyContrib]
 }
 
 # start date is the date the ikc report is created, end date is the date of the submission

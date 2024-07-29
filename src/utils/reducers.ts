@@ -125,6 +125,19 @@ export const getContributionsArray = (contributions): Contribution[] => {
   }, []);
 };
 
+export const getIKCReport = async (id) => {
+  const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
+    where: { id },
+  });
+
+  const contributions = await prisma.contribItem.findMany({
+    where: { ikcReportId: id },
+    include: { otherContribution: true, hourContribution: true },
+  });
+
+  return { ...ikcReport, contributions: contributions };
+};
+
 export const getIKCReportArray = (ikcReports): IkcReport[] => {
   return ikcReports.reduce((previousValue, currentValue) => {
     return [

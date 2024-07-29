@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import prisma from "../../libs/prisma";
 import { logger } from "../utils/Logger";
+import { getIKCReport } from "../utils/reducers";
 
 export default {
   Query: {
@@ -10,16 +11,7 @@ export default {
       logger.info(`Querying IKC report with id: ${id}`);
 
       try {
-        const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
-          where: { id },
-        });
-
-        const contributions = await prisma.contribItem.findMany({
-          where: { ikcReportId: id },
-          include: { otherContribution: true, hourContribution: true },
-        });
-
-        return { ...ikcReport, contributions: contributions };
+        return { ...(await getIKCReport(id)) };
       } catch (error) {
         logger.error(`Error querying IKC report: ${error}`);
         return null;

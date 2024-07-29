@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import prisma from "../../libs/prisma";
 import { logger } from "../utils/Logger";
-import { getPartnerOrg } from "../utils/reducers";
+import { getIKCReport, getPartnerOrg } from "../utils/reducers";
 
 export default {
   Query: {
@@ -31,7 +31,12 @@ export default {
       logger.info(`Querying all partner organizations for user: ${userId}`);
 
       const partnerOrgs = await prisma.partnerOrg.findMany({
-        where: { admins: { some: { id: userId } } },
+        where: {
+          OR: [
+            { admins: { some: { id: userId } } },
+            { contributors: { some: { userId: userId } } },
+          ],
+        },
         include: {
           contributors: true,
           admins: true,
@@ -56,6 +61,128 @@ export default {
       });
 
       return partnerOrgs.map((partnerOrg) => getPartnerOrg(partnerOrg));
+    },
+
+    getAllIKCByPartnerOrg: async (parent, args, context, info) => {
+      const { id } = args;
+
+      logger.info(`Querying all ikc reports for organization: ${id}`);
+
+      try {
+        const ikcReportIds = (
+          await prisma.iKCReport.findMany({
+            where: { partnerOrgId: id },
+          })
+        ).map((ikcReport) => ikcReport.id);
+
+        const ikcReports = await ikcReportIds.map(async (ikcReportId) => {
+          return await getIKCReport(ikcReportId);
+        });
+
+        return ikcReports;
+      } catch (error) {
+        logger.error(`Error querying IKC report: ${error}`);
+        return null;
+      }
+    },
+
+    getAllApprovedContribByOrg: async (parent, args, context, info) => {
+      const { id } = args;
+
+      logger.info(`Querying all approved contributions for project: ${id}`);
+
+      try {
+        const partnerOrg = await prisma.partnerOrg.findUniqueOrThrow({
+          where: { id: id },
+          include: {
+            IKCReport: {
+              select: {
+                id: true,
+                ResearchProject: true,
+                Contributions: {
+                  select: {
+                    id: true,
+                    contributorId: true,
+                    date: true,
+                    details: true,
+                    hourContribution: true,
+                    otherContribution: true,
+                  },
+                },
+                isApproved: true,
+              },
+            },
+          },
+        });
+
+        const data = partnerOrg.IKCReport.reduce(
+          (previousValue, currentValue) => {
+            const projectName = currentValue.ResearchProject.projectTitle;
+            let values = previousValue;
+
+            if (!values[projectName]) {
+              values[projectName] = {
+                projectName: projectName,
+                contributions: {},
+              };
+            }
+
+            currentValue.Contributions.forEach((contribution) => {
+              const month = contribution.date.toLocaleString("default", {
+                month: "long",
+              });
+
+              if (!values[projectName].contributions[month]) {
+                values[projectName].contributions[month] = {
+                  month: month,
+                  total: 0,
+                };
+              }
+
+              if (contribution.hourContribution) {
+                const temp = values[projectName].contributions[month].total;
+                values[projectName].contributions[month].total =
+                  temp +
+                  (
+                    contribution.hourContribution.hourlyRate *
+                    contribution.hourContribution.hours
+                  ).toFixed(2);
+              } else if (contribution.otherContribution) {
+                const temp = values[projectName].contributions[month].total;
+                values[projectName].contributions[month].total =
+                  temp +
+                  (
+                    contribution.otherContribution.value *
+                    contribution.otherContribution.value
+                  ).toFixed(2);
+              }
+            });
+
+            return values;
+          },
+          {}
+        );
+
+        let projContrib = Object.values(data).map((val) => {
+          let contributions = Object.values(val["contributions"]).map(
+            (contrib) => {
+              return contrib;
+            }
+          );
+
+          return {
+            projectName: val["projectName"],
+            contributions: contributions,
+          };
+        });
+
+        return projContrib;
+      } catch (error) {
+        logger.error(
+          `Error querying approved contributions for partner: ${error}`
+        );
+        return null;
+      }
     },
   },
   Mutation: {
