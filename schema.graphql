@@ -4,7 +4,6 @@ type Query {
   user(id: ID!): User
   getAllContributionsForUser(userId: ID!): [Contribution]
   getAllContributionsForContributor(contributorId: ID!): [Contribution]
-  login(email: String!, password: String!): ID
   contributor(id: ID!): Contributor
   partnerOrg(id: ID!): PartnerOrg
   getAllOrgsForUser(userId: ID!): [PartnerOrg]
@@ -19,6 +18,8 @@ type Query {
 
 type Mutation {
   # User mutations
+  login(email: String!, password: String!): ID
+
   createUser(
     siteAdminId: ID!
     firstName: String!
