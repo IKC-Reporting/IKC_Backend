@@ -15,13 +15,13 @@ async function main() {
       firstName: "test",
       lastName: "admin",
       email: "fakeAdmin.email@localhost.net",
-      password: "$2b$10$QCp3BfTdsYwgZREKJNS1ruCBN0PLjpmS3XePJcuT9QsCc9Jxmqee6",
+      password: "$2b$10$zek/ZxLjx3f1y3Ofy7v13OZDUwRhoRMCZa0z3Vy09.Xf0P3MwPR/O",
       siteAdmin: true,
       active: true,
     },
   });
 
-  // add non admin (password=helloW0rldm&)
+  // add non admin (password=h3lloW0r1dm&)
   await prisma.user.upsert({
     where: { id: "88c150cc-1235-4523-9224-65caafa935eb" },
     update: {},
@@ -30,7 +30,7 @@ async function main() {
       firstName: "test",
       lastName: "nonAdmin",
       email: "fakeUser.email@localhost.net",
-      password: "$2b$10$X1Dx6nGtR5F1h1gXux6DgunjOqEEBM7g02FIcx1udLhNCKNTC54/.",
+      password: "$2b$10$OwL0USMtmtQ3iC888YBDpOWUMdQvF8JBVoyf79SqeIoZO2mTRvG.m",
       siteAdmin: false,
       active: true,
     },
@@ -60,7 +60,7 @@ async function main() {
       firstName: "unconnected user",
       lastName: "lastname",
       email: "notReal@localhost.email",
-      password: "$2b$10$tXUTPAZzllI1WRUgQOxrD.Gb3j2ErgXvPGCDLvz.rpp/Zo2AAwsD2",
+      password: "$2b$10$cMpqF8CNyso3f5DuF8PTB.QZYjZi3fzrLIhkAkNotTVbN//iECJXG",
       siteAdmin: false,
       active: true,
     },
