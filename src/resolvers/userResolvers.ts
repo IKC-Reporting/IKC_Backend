@@ -27,6 +27,8 @@ export default {
         return null;
       }
     },
+  },
+  Mutation: {
     login: async (parent, args, context, info) => {
       const { email, password } = args;
       try {
@@ -38,8 +40,6 @@ export default {
         return null;
       }
     },
-  },
-  Mutation: {
     createUser: async (parent, args, context, info) => {
       const { siteAdminId, firstName, lastName, email, password, isSiteAdmin } =
         args;

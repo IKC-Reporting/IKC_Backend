@@ -125,6 +125,19 @@ export const getContributionsArray = (contributions): Contribution[] => {
   }, []);
 };
 
+export const getIKCReport = async (id) => {
+  const ikcReport = await prisma.iKCReport.findUniqueOrThrow({
+    where: { id },
+  });
+
+  const contributions = await prisma.contribItem.findMany({
+    where: { ikcReportId: id },
+    include: { otherContribution: true, hourContribution: true },
+  });
+
+  return { ...ikcReport, contributions: contributions };
+};
+
 export const getIKCReportArray = (ikcReports): IkcReport[] => {
   return ikcReports.reduce((previousValue, currentValue) => {
     return [
@@ -132,6 +145,7 @@ export const getIKCReportArray = (ikcReports): IkcReport[] => {
       {
         id: currentValue.id,
         partnerOrgId: currentValue.partnerOrgId,
+        researchProjectId: currentValue.researchProjectId,
         reportStartDate: currentValue.reportStartDate,
         submissionDate: currentValue.submissionDate,
         contributions: getContributionsArray(currentValue.Contributions),
@@ -145,7 +159,7 @@ export const getIKCReportArray = (ikcReports): IkcReport[] => {
 };
 
 export const getResearchProject = async (id) => {
-  const researchProject = await prisma.researchProject.findUnique({
+  const researchProject = await prisma.researchProject.findUniqueOrThrow({
     where: { id },
     include: {
       admins: true,
@@ -156,6 +170,7 @@ export const getResearchProject = async (id) => {
         select: {
           id: true,
           partnerOrgId: true,
+          researchProjectId: true,
           reportStartDate: true,
           submissionDate: true,
           Contributions: {

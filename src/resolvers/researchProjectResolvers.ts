@@ -22,11 +22,17 @@ export default {
 
       logger.info(`Querying all projects for partner organization: ${orgId}`);
 
-      const researchProjects = await prisma.researchProject.findMany({
-        where: { projectPartners: { some: { id: orgId } } },
-      });
+      const researchProjectIds = (
+        await prisma.researchProject.findMany({
+          where: { projectPartners: { some: { id: orgId } } },
+        })
+      ).map((project) => project.id);
 
-      return researchProjects.map((project) => getResearchProject(project.id));
+      const researchProjects = await researchProjectIds.map(async (id) =>
+        getResearchProject(id)
+      );
+
+      return researchProjects;
     },
   },
   Mutation: {

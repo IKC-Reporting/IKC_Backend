@@ -290,8 +290,14 @@ async function main() {
       researchProjectId: "88a21a78-ef83-4091-baec-835f61391fb3",
       reportStartDate: new Date("2024-01-01"),
       submissionDate: new Date("2024-03-01"),
+      approvalDate: new Date("2024-07-23"),
+      isApproved: true,
+      approverId: "88c150cc-1235-4523-9224-65caafa935eb",
       Contributions: {
-        connect: [{ id: "ef67def3-0bec-497d-ab90-cba50429760e" }],
+        connect: [
+          { id: "ef67def3-0bec-497d-ab90-cba50429760e" },
+          { id: "d6f7650b-345c-46ae-89a1-01f7be5374d7" },
+        ],
       },
     },
   });
