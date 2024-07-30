@@ -13,7 +13,7 @@ type Query {
   getAllOrgsForProject(projectId: ID!): [PartnerOrg]
   getAllProjForOrgs(orgId: ID!): [ResearchProject]
   getAllIKCByPartnerOrg(id: ID!): [IKCReport]
-  getAllApprovedContribByOrg(id: ID!): [ProjContrib]
+  getAllApprovedContribByOrg(orgId: ID!): [ProjContrib]
 }
 
 type Mutation {

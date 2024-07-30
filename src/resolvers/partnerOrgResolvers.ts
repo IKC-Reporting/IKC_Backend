@@ -87,13 +87,13 @@ export default {
     },
 
     getAllApprovedContribByOrg: async (parent, args, context, info) => {
-      const { id } = args;
+      const { orgId } = args;
 
-      logger.info(`Querying all approved contributions for project: ${id}`);
+      logger.info(`Querying all approved contributions for project: ${orgId}`);
 
       try {
         const partnerOrg = await prisma.partnerOrg.findUniqueOrThrow({
-          where: { id: id },
+          where: { id: orgId },
           include: {
             IKCReport: {
               select: {
