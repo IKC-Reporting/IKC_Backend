@@ -30,7 +30,7 @@ async function main() {
       firstName: "test",
       lastName: "nonAdmin",
       email: "fakeUser.email@localhost.net",
-      password: "$2b$10$OwL0USMtmtQ3iC888YBDpOWUMdQvF8JBVoyf79SqeIoZO2mTRvG.m",
+      password: "$2b$10$IIYMvspwWavu/jqQlBGL1euys3hevh3dPnwhznREA6iZ4XBll4cla",
       siteAdmin: false,
       active: true,
     },
