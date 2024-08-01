@@ -1,5 +1,5 @@
-import { configDefaults, defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
+import { configDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [react()],
@@ -8,6 +8,7 @@ export default defineConfig({
     environment: "jsdom",
     coverage: {
       provider: "v8",
+      reportOnFailure: true,
       exclude: [
         // says there is an error but that is not the case
         // @ts-ignore

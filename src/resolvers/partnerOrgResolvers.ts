@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import prisma from "../../libs/prisma";
+import { MonthlyContrib } from "../generated/graphql";
 import { logger } from "../utils/Logger";
 import { getIKCReport, getPartnerOrg } from "../utils/reducers";
 
@@ -163,15 +164,15 @@ export default {
           {}
         );
 
-        let projContrib = Object.values(data).map((val) => {
-          let contributions = Object.values(val["contributions"]).map(
-            (contrib) => {
+        const projContrib = Object.values(data).map((val) => {
+          const contributions = Object.values(val["contributions"]).map(
+            (contrib: MonthlyContrib) => {
               return contrib;
             }
           );
-
+          const projectName: string = val["projectName"];
           return {
-            projectName: val["projectName"],
+            projectName: projectName,
             contributions: contributions,
           };
         });
