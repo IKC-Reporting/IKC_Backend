@@ -4,6 +4,7 @@ import {
   testAdmin,
   testContributor,
   testPartnerOrg,
+  testResearchProject,
   testUser,
 } from "../../__mocks__/index";
 import contributorResolvers from "../contributorResolvers";
@@ -19,7 +20,7 @@ describe("ContributorResolver unit tests", () => {
 
         const contributor = await contributorResolvers.Query.contributor(
           null,
-          { userId: "testId" },
+          { id: "testId" },
           null,
           null
         );
@@ -54,6 +55,9 @@ describe("ContributorResolver unit tests", () => {
           ...testAdmin,
         });
 
+        prisma.researchProject.findUniqueOrThrow.mockResolvedValue({
+          ...testResearchProject,
+        });
         prisma.contributor.create.mockResolvedValue({
           ...testContributor,
           id: testContributor.id,
@@ -69,6 +73,7 @@ describe("ContributorResolver unit tests", () => {
               userId: testUser.id,
               partnerOrgAdminId: testAdmin.id,
               partnerOrgId: testContributor.partnerOrgId,
+              researchProjectId: testResearchProject.id,
               hourlyRate: testContributor.hourlyRate,
               benRatePer: testContributor.benRatePer,
             },

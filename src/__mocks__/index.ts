@@ -3,6 +3,8 @@ export const testUser = {
   firstName: "newUser",
   lastName: "exLastname",
   siteAdmin: false,
+  email: "testEmail@email.com",
+  password: "hash",
   active: true,
   PartnerOrgAdminAssignments: [{ id: "testPartnerOrgId" }],
 };
@@ -13,6 +15,8 @@ export const testAdmin = {
   lastName: "exLastname",
   siteAdmin: true,
   active: true,
+  email: "testEmail@email.com",
+  password: "hash",
   PartnerOrgAdminAssignments: [{ id: "testPartnerOrgId" }],
 };
 
@@ -20,7 +24,9 @@ export const testContributor = {
   id: "testContributorId",
 
   userId: testUser.id,
+  User: testUser,
   partnerOrgId: "partnerOrgID",
+  researchProjectId: "researchProjectId",
   hourlyRate: 20,
   benRatePer: 0.1,
   contributions: null,
@@ -51,6 +57,7 @@ export const testContributionItem = {
     contribItemId: "testContributionItem",
     itemName: "example name",
     value: 1234,
+    items: 4,
   },
 };
 
@@ -75,6 +82,7 @@ export const testResearchProject = {
   admins: [testUser],
   projectPartners: [testPartnerOrg],
   ikcReports: [],
+  Contributor: [testContributor],
 };
 
 export const employeeHoursMock = [
